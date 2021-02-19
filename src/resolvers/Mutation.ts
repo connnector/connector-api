@@ -93,6 +93,22 @@ const Mutation = {
 
     return requiredRepo;
   },
+  updateRepo: (
+    parent,
+    args: { repoId: string; updateData: { title: string; visibility: string } },
+    { db },
+    info
+  ): {} => {
+    const repoIndex = db.repos.findIndex((x) => x.id === args.repoId);
+    if (repoIndex === -1) {
+      throw new Error("Repo not found");
+    }
+    db.repos[repoIndex] = {
+      ...db.users[repoIndex],
+      ...args.updateData,
+    };
+    return db.repos[repoIndex];
+  },
 };
 
 export { Mutation as default };
