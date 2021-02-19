@@ -18,6 +18,20 @@ const Mutation = {
     db.users.push(newUser);
     return newUser;
   },
+  deleteUser: (parent, args: { userId: string }, { db }, info): {} => {
+    const existingUserIndex: number = db.users.findIndex(
+      (x) => x.id === args.userId
+    );
+    if (existingUserIndex === -1) {
+      throw new Error("User Does Not exist");
+    }
+    const requiredUser: { id: string; name: string; email: string } =
+      db.users[existingUserIndex];
+    db.repos = db.repos.filter((x) => x.developer !== requiredUser.id);
+    db.users = db.users.splice(existingUserIndex, 1);
+
+    return requiredUser;
+  },
   createRepo: (
     parent,
     args: {
