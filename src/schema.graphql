@@ -1,0 +1,35 @@
+type Query {
+  users(nameQuery: String): [User!]!
+  repos(nameQuery: String): [Repo!]!
+  userById(idQuery: ID!): User!
+  repoById(idQuery: ID!): Repo!
+}
+
+type Mutation {
+  createUser(userData: create_user_data!): User!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  repos(visibility: visibilityQuery!): [Repo!]!
+}
+
+type Repo {
+  id: ID!
+  title: String!
+  visibility: String!
+  developer: User!
+}
+
+input create_user_data {
+  name: String!
+  email: String!
+}
+
+enum visibilityQuery {
+  PUBLIC
+  PRIVATE
+  ALL
+}
