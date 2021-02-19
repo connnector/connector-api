@@ -32,20 +32,43 @@ const Mutation = {
 
     return requiredUser;
   },
+  updateUser: (
+    parent,
+    args: { userId: string; updateData: { name: string; email: string } },
+    { db },
+    info
+  ): {} => {
+    const userIndex = db.users.findIndex((x) => x.id === args.userId);
+    if (userIndex === -1) {
+      throw new Error("User not found");
+    }
+    db.users[userIndex] = {
+      ...db.users[userIndex],
+      ...args.updateData,
+    };
+    return db.users[userIndex];
+  },
   createRepo: (
     parent,
     args: {
-      repoData: { title: String; visibility: String; developer: String };
+      repoData: { title: string; visibility: string; developer: string };
     },
     { db },
     info
   ): {} => {
-    const userExists = db.users.find((x) => x.id === args.repoData.developer);
+    const userExists: number = db.users.find(
+      (x) => x.id === args.repoData.developer
+    );
 
     if (!userExists) {
       throw new Error("No developer with this id");
     }
-    const newRepo = {
+    const newRepo: {
+      id: string;
+      title: string;
+      visibility: string;
+      developer: string;
+    } = {
       id: uuid4(),
       ...args.repoData,
     };

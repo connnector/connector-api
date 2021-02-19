@@ -8,6 +8,7 @@ type Query {
 type Mutation {
   createUser(userData: create_user_data!): User!
   deleteUser(userId: ID!): User!
+  updateUser(userId: ID!, updateData: update_user_data): User!
   createRepo(repoData: create_repo_data!): Repo!
   deleteRepo(repoId: ID!): Repo!
 }
@@ -34,6 +35,11 @@ input create_repo_data {
   title: String!
   visibility: String!
   developer: String!
+}
+
+input update_user_data {
+  name: String
+  email: String
 }
 
 enum visibilityQuery {
