@@ -5,6 +5,8 @@ import User from "./resolvers/User";
 import Repo from "./resolvers/Repo";
 import Mutation from "./resolvers/Mutation";
 
+const PORT: string = process.env.PORT;
+
 const server = new GraphQLServer({
   typeDefs: "./src/schema.graphql",
   resolvers: {
@@ -18,6 +20,6 @@ const server = new GraphQLServer({
   },
 });
 
-server.start(() => {
-  console.log("The Server is Up");
+server.start({ port: PORT }, () => {
+  console.log(`The Server is Up ${PORT}`);
 });

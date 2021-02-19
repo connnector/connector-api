@@ -9,6 +9,7 @@ const Query_1 = __importDefault(require("./resolvers/Query"));
 const User_1 = __importDefault(require("./resolvers/User"));
 const Repo_1 = __importDefault(require("./resolvers/Repo"));
 const Mutation_1 = __importDefault(require("./resolvers/Mutation"));
+const PORT = process.env.PORT;
 const server = new graphql_yoga_1.GraphQLServer({
     typeDefs: "./src/schema.graphql",
     resolvers: {
@@ -21,7 +22,7 @@ const server = new graphql_yoga_1.GraphQLServer({
         db: db_1.default,
     },
 });
-server.start(() => {
-    console.log("The Server is Up");
+server.start({ port: PORT }, () => {
+    console.log(`The Server is Up ${PORT}`);
 });
 //# sourceMappingURL=server.js.map

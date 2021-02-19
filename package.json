@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/server.ts",
   "scripts": {
-    "test": "tsc && nodemon src/server.ts --ext ts,graphqls"
+    "start": "tsc && nodemon src/server.ts --ext ts,graphql"
   },
   "author": "",
   "license": "ISC",

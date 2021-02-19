@@ -18,6 +18,27 @@ const Mutation = {
     db.users.push(newUser);
     return newUser;
   },
+  createRepo: (
+    parent,
+    args: {
+      repoData: { title: String; visibility: String; developer: String };
+    },
+    { db },
+    info
+  ): {} => {
+    const userExists = db.users.find((x) => x.id === args.repoData.developer);
+
+    if (!userExists) {
+      throw new Error("No developer with this id");
+    }
+    const newRepo = {
+      id: uuid4(),
+      ...args.repoData,
+    };
+    db.repos.push(newRepo);
+
+    return newRepo;
+  },
 };
 
 export { Mutation as default };
