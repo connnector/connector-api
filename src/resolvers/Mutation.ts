@@ -53,6 +53,23 @@ const Mutation = {
 
     return newRepo;
   },
+  deleteRepo: (parent, args: { repoId: string }, { db }, info): {} => {
+    const existingRepoIndex: number = db.repos.findIndex(
+      (x) => x.id === args.repoId
+    );
+    if (existingRepoIndex === -1) {
+      throw new Error("Repo Not Found");
+    }
+    const requiredRepo: {
+      id: string;
+      title: string;
+      developer: string;
+      visibility: string;
+    } = db.repos[existingRepoIndex];
+    db.repos = db.repos.splice(existingRepoIndex, 1);
+
+    return requiredRepo;
+  },
 };
 
 export { Mutation as default };
