@@ -1,4 +1,7 @@
 const Comment = {
+  repo: (parent, args, { db }, info): object => {
+    return db.repos.find((x) => x.id === parent.repoId);
+  },
   developer: (
     parent: { id: string; text: string; repoId: string; developer: string },
     args,
