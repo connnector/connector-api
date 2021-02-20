@@ -22,6 +22,14 @@ const Mutation = {
         db.users = db.users.splice(existingUserIndex, 1);
         return requiredUser;
     },
+    updateUser: (parent, args, { db }, info) => {
+        const userIndex = db.users.findIndex((x) => x.id === args.userId);
+        if (userIndex === -1) {
+            throw new Error("User not found");
+        }
+        db.users[userIndex] = Object.assign(Object.assign({}, db.users[userIndex]), args.updateData);
+        return db.users[userIndex];
+    },
     createRepo: (parent, args, { db }, info) => {
         const userExists = db.users.find((x) => x.id === args.repoData.developer);
         if (!userExists) {
@@ -39,6 +47,14 @@ const Mutation = {
         const requiredRepo = db.repos[existingRepoIndex];
         db.repos = db.repos.splice(existingRepoIndex, 1);
         return requiredRepo;
+    },
+    updateRepo: (parent, args, { db }, info) => {
+        const repoIndex = db.repos.findIndex((x) => x.id === args.repoId);
+        if (repoIndex === -1) {
+            throw new Error("Repo not found");
+        }
+        db.repos[repoIndex] = Object.assign(Object.assign({}, db.users[repoIndex]), args.updateData);
+        return db.repos[repoIndex];
     },
 };
 exports.default = Mutation;

@@ -5,7 +5,7 @@ const Mutation = {
     args: { userData: { name: string; email: string } },
     { db },
     info
-  ): {} => {
+  ): object => {
     const email: {} = db.users.find((x) => x.email === args.userData.email);
     if (email) {
       throw new Error("Emial Already Taken");
@@ -18,7 +18,7 @@ const Mutation = {
     db.users.push(newUser);
     return newUser;
   },
-  deleteUser: (parent, args: { userId: string }, { db }, info): {} => {
+  deleteUser: (parent, args: { userId: string }, { db }, info): object => {
     const existingUserIndex: number = db.users.findIndex(
       (x) => x.id === args.userId
     );
@@ -37,7 +37,7 @@ const Mutation = {
     args: { userId: string; updateData: { name: string; email: string } },
     { db },
     info
-  ): {} => {
+  ): object => {
     const userIndex = db.users.findIndex((x) => x.id === args.userId);
     if (userIndex === -1) {
       throw new Error("User not found");
@@ -55,7 +55,7 @@ const Mutation = {
     },
     { db },
     info
-  ): {} => {
+  ): object => {
     const userExists: number = db.users.find(
       (x) => x.id === args.repoData.developer
     );
@@ -76,7 +76,7 @@ const Mutation = {
 
     return newRepo;
   },
-  deleteRepo: (parent, args: { repoId: string }, { db }, info): {} => {
+  deleteRepo: (parent, args: { repoId: string }, { db }, info): object => {
     const existingRepoIndex: number = db.repos.findIndex(
       (x) => x.id === args.repoId
     );
@@ -98,7 +98,7 @@ const Mutation = {
     args: { repoId: string; updateData: { title: string; visibility: string } },
     { db },
     info
-  ): {} => {
+  ): object => {
     const repoIndex = db.repos.findIndex((x) => x.id === args.repoId);
     if (repoIndex === -1) {
       throw new Error("Repo not found");

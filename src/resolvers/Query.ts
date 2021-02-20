@@ -1,5 +1,5 @@
 const Query = {
-  users: (parent, args: { nameQuery: string }, { db }, info): [{}] => {
+  users: (parent, args: { nameQuery: string }, { db }, info): [object] => {
     if (!args.nameQuery) {
       return db.users;
     } else if (args.nameQuery) {
@@ -20,11 +20,11 @@ const Query = {
       });
     }
   },
-  userById: (parent, args: { idQuery: string }, { db }, info): {} => {
+  userById: (parent, args: { idQuery: string }, { db }, info): object => {
     const reqUser: {} = db.users.find((x) => x.id === args.idQuery);
     return reqUser;
   },
-  repos: (parent, args: { nameQuery: string }, { db }, info): [{}] => {
+  repos: (parent, args: { nameQuery: string }, { db }, info): [object] => {
     if (!args.nameQuery) {
       return db.repos.filter((x) => x.visibility === "public");
     } else if (args.nameQuery) {
@@ -47,7 +47,7 @@ const Query = {
       });
     }
   },
-  repoById: (parent, args, { db }, info): {} => {
+  repoById: (parent, args, { db }, info): object => {
     const reqRepo: {} = db.repos.find((x) => x.id === args.idQuery);
     return reqRepo;
   },
