@@ -19,7 +19,8 @@ type User {
   id: ID!
   name: String!
   email: String!
-  repos(visibility: visibilityQuery!): [Repo!]!
+  repos(visibility: visibilityQuery!): [Repo]!
+  comments(idOfRepo: ID!): [Comment]!
 }
 
 type Repo {
@@ -27,7 +28,7 @@ type Repo {
   title: String!
   visibility: String!
   developer: User!
-  comments: [Comment!]!
+  comments: [Comment]!
 }
 
 type Comment {
