@@ -1,6 +1,7 @@
 type Query {
   users(nameQuery: String): [User!]!
   repos(nameQuery: String): [Repo!]!
+  comments(idOfRepo: ID!): [Comment!]!
   userById(idQuery: ID!): User!
   repoById(idQuery: ID!): Repo!
 }
@@ -26,6 +27,12 @@ type Repo {
   title: String!
   visibility: String!
   developer: ID!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  repoId: ID!
 }
 
 input create_user_data {
