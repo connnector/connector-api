@@ -27,6 +27,7 @@ type Repo {
   title: String!
   visibility: String!
   developer: User!
+  comments: [Comment!]!
 }
 
 type Comment {
