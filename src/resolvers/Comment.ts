@@ -1,5 +1,10 @@
-const Repo = {
-  developer: (parent, args, { db }, info): {} => {
+const Comment = {
+  developer: (
+    parent: { id: string; text: string; repoId: string; developer: string },
+    args,
+    { db },
+    info
+  ): object => {
     const developerExists: number = db.users.findIndex(
       (x) => x.id === parent.developer
     );
@@ -10,4 +15,4 @@ const Repo = {
   },
 };
 
-export { Repo as default };
+export { Comment as default };

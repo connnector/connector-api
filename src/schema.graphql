@@ -26,13 +26,14 @@ type Repo {
   id: ID!
   title: String!
   visibility: String!
-  developer: ID!
+  developer: User!
 }
 
 type Comment {
   id: ID!
   text: String!
-  repoId: ID!
+  repo: Repo!
+  developer: User!
 }
 
 input create_user_data {

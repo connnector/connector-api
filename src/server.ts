@@ -4,6 +4,7 @@ import Query from "./resolvers/Query";
 import User from "./resolvers/User";
 import Repo from "./resolvers/Repo";
 import Mutation from "./resolvers/Mutation";
+import Comment from "./resolvers/Comment";
 import Chalk from "chalk";
 
 const PORT: string = process.env.PORT;
@@ -15,6 +16,7 @@ const server = new GraphQLServer({
     User,
     Repo,
     Mutation,
+    Comment,
   },
   context: {
     db,
