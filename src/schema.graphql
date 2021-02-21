@@ -14,6 +14,7 @@ type Mutation {
   deleteRepo(repoId: ID!): Repo!
   updateRepo(repoId: ID!, updateData: update_repo_data): Repo!
   createComment(data: create_comment_data!): Comment!
+  deleteComment(idOfRepo: ID!): Comment!
 }
 
 type User {

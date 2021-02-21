@@ -139,6 +139,23 @@ const Mutation = {
 
     return newComment;
   },
+  deleteComment: (
+    parent,
+    args: { commentId: string },
+    { db },
+    info
+  ): object => {
+    const commentExist: number = db.comments.findIndex(
+      (x) => x.id === args.commentId
+    );
+    if (commentExist === -1) {
+      throw new Error("Comment doesNot exist");
+    }
+
+    const deletedComment = db.comments.splice(commentExist, 1);
+
+    return deletedComment;
+  },
 };
 
 export { Mutation as default };
