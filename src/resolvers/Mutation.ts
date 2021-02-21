@@ -109,6 +109,36 @@ const Mutation = {
     };
     return db.repos[repoIndex];
   },
+  createComment: (
+    parent,
+    args: { text: string; developer: string; idOfRepo: string },
+    { db },
+    info
+  ): object => {
+    const userExists: number = db.users.findIndex(
+      (x) => x.id === args.developer
+    );
+    if (userExists === -1) {
+      throw new Error("User doesnot exist");
+    }
+    const repoValid: number = db.repos.findIndex(
+      (x) => x.id === args.idOfRepo && x.visibility === "Public"
+    );
+    if (repoValid === -1) {
+      throw new Error("Repo is either private or doesnot exist");
+    }
+
+    const newComment: object = {
+      id: uuid4(),
+      text: args.text,
+      developer: args.developer,
+      repoId: args.idOfRepo,
+    };
+
+    db.comments.push(newComment);
+
+    return newComment;
+  },
 };
 
 export { Mutation as default };
