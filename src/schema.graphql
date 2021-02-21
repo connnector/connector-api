@@ -14,7 +14,8 @@ type Mutation {
   deleteRepo(repoId: ID!): Repo!
   updateRepo(repoId: ID!, updateData: update_repo_data): Repo!
   createComment(data: create_comment_data!): Comment!
-  deleteComment(idOfRepo: ID!): Comment!
+  deleteComment(commentId: ID!): Comment!
+  updateComment(data: update_comment_data): Comment!
 }
 
 type User {
@@ -64,6 +65,10 @@ input create_comment_data {
   text: string!
   developer: ID!
   idOfRepo: ID!
+}
+input update_comment_data {
+  commentId: ID!
+  text: string!
 }
 
 enum visibilityQuery {
