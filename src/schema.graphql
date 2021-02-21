@@ -60,6 +60,7 @@ input update_repo_data {
 }
 
 input create_comment_data {
+  text: string!
   developer: ID!
   idOfRepo: ID!
 }
