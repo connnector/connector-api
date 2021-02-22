@@ -62,13 +62,13 @@ input update_repo_data {
 }
 
 input create_comment_data {
-  text: string!
+  text: String!
   developer: ID!
   idOfRepo: ID!
 }
 input update_comment_data {
   commentId: ID!
-  text: string!
+  text: String!
 }
 
 enum visibilityQuery {

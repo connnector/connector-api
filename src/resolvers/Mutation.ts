@@ -1,21 +1,21 @@
 import { v4 as uuid4 } from "uuid";
+import User from "../model/User";
+
 const Mutation = {
-  createUser: (
+  createUser: async (
     parent,
     args: { userData: { name: string; email: string } },
     { db },
     info
-  ): object => {
+  ): Promise<object> => {
     const email: {} = db.users.find((x) => x.email === args.userData.email);
     if (email) {
       throw new Error("Emial Already Taken");
     }
-    const newUser: {} = {
-      id: uuid4(),
+    const newUser: {} = await User.create({
       ...args.userData,
-    };
+    });
 
-    db.users.push(newUser);
     return newUser;
   },
   deleteUser: (parent, args: { userId: string }, { db }, info): object => {

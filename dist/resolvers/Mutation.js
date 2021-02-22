@@ -56,6 +56,40 @@ const Mutation = {
         db.repos[repoIndex] = Object.assign(Object.assign({}, db.users[repoIndex]), args.updateData);
         return db.repos[repoIndex];
     },
+    createComment: (parent, args, { db }, info) => {
+        const userExists = db.users.findIndex((x) => x.id === args.data.developer);
+        if (userExists === -1) {
+            throw new Error("User doesnot exist");
+        }
+        const repoValid = db.repos.findIndex((x) => x.id === args.data.idOfRepo && x.visibility === "Public");
+        if (repoValid === -1) {
+            throw new Error("Repo is either private or doesnot exist");
+        }
+        const newComment = {
+            id: uuid_1.v4(),
+            text: args.data.text,
+            developer: args.data.developer,
+            repoId: args.data.idOfRepo,
+        };
+        db.comments.push(newComment);
+        return newComment;
+    },
+    deleteComment: (parent, args, { db }, info) => {
+        const commentExist = db.comments.findIndex((x) => x.id === args.commentId);
+        if (commentExist === -1) {
+            throw new Error("Comment doesNot exist");
+        }
+        const deletedComment = db.comments.splice(commentExist, 1);
+        return deletedComment;
+    },
+    updateComment: (parent, args, { db }, info) => {
+        const commentExist = db.comments.findIndex((x) => x.id === args.data.commentId);
+        if (commentExist === -1) {
+            throw new Error("Comment doesNot exist");
+        }
+        db.comments[commentExist] = Object.assign(Object.assign({}, db.comments[commentExist]), { text: args.data.text });
+        return db.comments[commentExist];
+    },
 };
 exports.default = Mutation;
 //# sourceMappingURL=Mutation.js.map

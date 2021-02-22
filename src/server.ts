@@ -24,13 +24,16 @@ const server = new GraphQLServer({
   },
 });
 
-server.start({ port: PORT }, () => {
-  try {
-    mongoose.connect(
-      "mongodb+srv://Shubham:<password>@cluster0.wepi9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-    );
-    console.log(Chalk.hex("#fab95b").bold(`The Server is Up ${PORT}`));
-  } catch (e) {
+mongoose
+  .connect(
+    "mongodb+srv://Johnny:iamjohnnyboy@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority",
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(() => {
+    server.start({ port: PORT }, () => {
+      console.log(Chalk.hex("#fab95b").bold(`The Server is Up ${PORT}`));
+    });
+  })
+  .catch((e) => {
     console.log(e);
-  }
-});
+  });

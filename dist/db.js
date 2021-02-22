@@ -63,9 +63,60 @@ const repos = [
         developer: "shu",
     },
 ];
+const comments = [
+    {
+        id: "cmnt1",
+        text: "great",
+        repoId: "faculty",
+        developer: "shu",
+    },
+    {
+        id: "cmnt2",
+        text: "cool",
+        repoId: "indecision",
+        developer: "shu",
+    },
+    {
+        id: "cmnt3",
+        text: "gre",
+        repoId: "doubt-solver",
+        developer: "shi",
+    },
+    {
+        id: "cmnt4",
+        text: "great",
+        repoId: "flight",
+        developer: "shi",
+    },
+    {
+        id: "cmnt5",
+        text: "great",
+        repoId: "temperature",
+        developer: "shre",
+    },
+    {
+        id: "cmnt6",
+        text: "great",
+        repoId: "to-do",
+        developer: "shre",
+    },
+    {
+        id: "cmnt7",
+        text: "great",
+        repoId: "chat",
+        developer: "shru",
+    },
+    {
+        id: "cmnt8",
+        text: "great",
+        repoId: "weather",
+        developer: "shru",
+    },
+];
 const db = {
     users,
     repos,
+    comments,
 };
 exports.default = db;
 //# sourceMappingURL=db.js.map
