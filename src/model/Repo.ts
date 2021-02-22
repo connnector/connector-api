@@ -8,4 +8,6 @@ const repoSchema = new Schema({
   developer: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
 });
 
-module.exports = mongoose.model("Repo", repoSchema);
+const Repo = mongoose.model("Repo", repoSchema);
+
+export { Repo as default };

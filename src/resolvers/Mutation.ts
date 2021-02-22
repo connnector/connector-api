@@ -1,5 +1,6 @@
 import { v4 as uuid4 } from "uuid";
 import User from "../model/User";
+import Repo from "../model/Repo";
 
 const Mutation = {
   createUser: async (
