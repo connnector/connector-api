@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const repoSchema = new Schema({
+const commentSchema = new Schema({
   text: { type: String, required: true },
   developer: { type: mongoose.Types.ObjectId, required: true, rep: "User" },
   repoId: { type: mongoose.Types.ObjectId, required: true, ref: "Repo" },
 });
 
-const Repo = mongoose.model("Repo", repoSchema);
+const Comment = mongoose.model("Comment", commentSchema);
 
-export { Repo as default };
+export { Comment as default };

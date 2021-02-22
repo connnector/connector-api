@@ -1,6 +1,7 @@
 import { v4 as uuid4 } from "uuid";
 import User from "../model/User";
 import Repo from "../model/Repo";
+import Comment from "../model/Comment";
 
 const Mutation = {
   createUser: async (
@@ -107,27 +108,20 @@ const Mutation = {
     { db },
     info
   ): object => {
-    const userExists: number = db.users.findIndex(
-      (x) => x.id === args.data.developer
-    );
-    if (userExists === -1) {
+    const userExists: object = User.findById(args.data.developer);
+    if (!userExists) {
       throw new Error("User doesnot exist");
     }
-    const repoValid: number = db.repos.findIndex(
-      (x) => x.id === args.data.idOfRepo && x.visibility === "Public"
-    );
-    if (repoValid === -1) {
+    const repoValid: object = Repo.findById(args.data.idOfRepo);
+    if (!repoValid) {
       throw new Error("Repo is either private or doesnot exist");
     }
 
-    const newComment: object = {
-      id: uuid4(),
+    const newComment: object = Repo.create({
       text: args.data.text,
       developer: args.data.developer,
       repoId: args.data.idOfRepo,
-    };
-
-    db.comments.push(newComment);
+    });
 
     return newComment;
   },
