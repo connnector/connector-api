@@ -1,17 +1,29 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
-const uuid_1 = require("uuid");
+const User_1 = __importDefault(require("../model/User"));
+const Repo_1 = __importDefault(require("../model/Repo"));
 const Mutation = {
-    createUser: (parent, args, { db }, info) => {
-        const email = db.users.find((x) => x.email === args.userData.email);
+    createUser: (parent, args, { db }, info) => __awaiter(void 0, void 0, void 0, function* () {
+        const email = User_1.default.find({ email: args.userData.email });
         if (email) {
             throw new Error("Emial Already Taken");
         }
-        const newUser = Object.assign({ id: uuid_1.v4() }, args.userData);
-        db.users.push(newUser);
+        const newUser = yield User_1.default.create(Object.assign({}, args.userData));
         return newUser;
-    },
+    }),
     deleteUser: (parent, args, { db }, info) => {
         const existingUserIndex = db.users.findIndex((x) => x.id === args.userId);
         if (existingUserIndex === -1) {
@@ -31,12 +43,12 @@ const Mutation = {
         return db.users[userIndex];
     },
     createRepo: (parent, args, { db }, info) => {
-        const userExists = db.users.find((x) => x.id === args.repoData.developer);
+        console.log(args.repoData);
+        const userExists = User_1.default.findById(args.repoData.developer);
         if (!userExists) {
             throw new Error("No developer with this id");
         }
-        const newRepo = Object.assign({ id: uuid_1.v4() }, args.repoData);
-        db.repos.push(newRepo);
+        const newRepo = Repo_1.default.create(Object.assign({}, args.repoData));
         return newRepo;
     },
     deleteRepo: (parent, args, { db }, info) => {
@@ -57,21 +69,19 @@ const Mutation = {
         return db.repos[repoIndex];
     },
     createComment: (parent, args, { db }, info) => {
-        const userExists = db.users.findIndex((x) => x.id === args.data.developer);
-        if (userExists === -1) {
+        const userExists = User_1.default.findById(args.data.developer);
+        if (!userExists) {
             throw new Error("User doesnot exist");
         }
-        const repoValid = db.repos.findIndex((x) => x.id === args.data.idOfRepo && x.visibility === "Public");
-        if (repoValid === -1) {
+        const repoValid = Repo_1.default.findById(args.data.idOfRepo);
+        if (!repoValid) {
             throw new Error("Repo is either private or doesnot exist");
         }
-        const newComment = {
-            id: uuid_1.v4(),
+        const newComment = Repo_1.default.create({
             text: args.data.text,
             developer: args.data.developer,
             repoId: args.data.idOfRepo,
-        };
-        db.comments.push(newComment);
+        });
         return newComment;
     },
     deleteComment: (parent, args, { db }, info) => {

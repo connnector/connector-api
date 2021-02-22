@@ -1,4 +1,4 @@
-import { v4 as uuid4 } from "uuid";
+import mongoose from "mongoose";
 import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
@@ -10,14 +10,23 @@ const Mutation = {
     { db },
     info
   ): Promise<object> => {
-    const email: {} = db.users.find((x) => x.email === args.userData.email);
-    if (email) {
-      throw new Error("Emial Already Taken");
+    try {
+      const existingUser = await User.find({ email: args.userData.email });
+      if (existingUser) {
+        throw new Error("user already exists");
+      }
+    } catch (e) {
+      throw new Error(e);
     }
-    const newUser: {} = await User.create({
-      ...args.userData,
-    });
 
+    let newUser: object;
+    try {
+      newUser = await User.create({
+        ...args.userData,
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
     return newUser;
   },
   deleteUser: (parent, args: { userId: string }, { db }, info): object => {
@@ -58,6 +67,7 @@ const Mutation = {
     { db },
     info
   ): object => {
+    console.log(args.repoData);
     const userExists: object = User.findById(args.repoData.developer);
 
     if (!userExists) {
