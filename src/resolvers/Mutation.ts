@@ -57,23 +57,14 @@ const Mutation = {
     { db },
     info
   ): object => {
-    const userExists: number = db.users.find(
-      (x) => x.id === args.repoData.developer
-    );
+    const userExists: object = User.findById(args.repoData.developer);
 
     if (!userExists) {
       throw new Error("No developer with this id");
     }
-    const newRepo: {
-      id: string;
-      title: string;
-      visibility: string;
-      developer: string;
-    } = {
-      id: uuid4(),
+    const newRepo: object = Repo.create({
       ...args.repoData,
-    };
-    db.repos.push(newRepo);
+    });
 
     return newRepo;
   },
