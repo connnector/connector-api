@@ -16,12 +16,23 @@ exports.default = void 0;
 const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
 const Mutation = {
-    createUser: (parent, args, { db }, info) => __awaiter(void 0, void 0, void 0, function* () {
-        const email = User_1.default.find({ email: args.userData.email });
-        if (email) {
-            throw new Error("Emial Already Taken");
+    createUser: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const existingUser = yield User_1.default.find({ email: args.userData.email });
+            if (existingUser) {
+                throw new Error("user already exists");
+            }
         }
-        const newUser = yield User_1.default.create(Object.assign({}, args.userData));
+        catch (e) {
+            throw new Error(e);
+        }
+        let newUser;
+        try {
+            newUser = yield User_1.default.create(Object.assign({}, args.userData));
+        }
+        catch (e) {
+            throw new Error(e);
+        }
         return newUser;
     }),
     deleteUser: (parent, args, { db }, info) => {
@@ -42,15 +53,25 @@ const Mutation = {
         db.users[userIndex] = Object.assign(Object.assign({}, db.users[userIndex]), args.updateData);
         return db.users[userIndex];
     },
-    createRepo: (parent, args, { db }, info) => {
-        console.log(args.repoData);
-        const userExists = User_1.default.findById(args.repoData.developer);
-        if (!userExists) {
-            throw new Error("No developer with this id");
+    createRepo: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const userExists = yield User_1.default.findById(args.repoData.developer);
+            if (!userExists) {
+                throw new Error("No developer with this id");
+            }
         }
-        const newRepo = Repo_1.default.create(Object.assign({}, args.repoData));
+        catch (e) {
+            throw new Error(e);
+        }
+        let newRepo;
+        try {
+            newRepo = Repo_1.default.create(Object.assign({}, args.repoData));
+        }
+        catch (e) {
+            throw new Error(e);
+        }
         return newRepo;
-    },
+    }),
     deleteRepo: (parent, args, { db }, info) => {
         const existingRepoIndex = db.repos.findIndex((x) => x.id === args.repoId);
         if (existingRepoIndex === -1) {

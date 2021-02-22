@@ -7,16 +7,18 @@ const Mutation = {
   createUser: async (
     parent,
     args: { userData: { name: string; email: string } },
-    { db },
+    ctx,
     info
   ): Promise<object> => {
+    let existingUser;
     try {
-      const existingUser = await User.find({ email: args.userData.email });
-      if (existingUser) {
-        throw new Error("user already exists");
-      }
+      existingUser = await User.findOne({ email: args.userData.email });
     } catch (e) {
       throw new Error(e);
+    }
+
+    if (existingUser) {
+      throw new Error("user already exists");
     }
 
     let newUser: object;
@@ -24,8 +26,8 @@ const Mutation = {
       newUser = await User.create({
         ...args.userData,
       });
-    } catch (error) {
-      throw new Error(error);
+    } catch (e) {
+      throw new Error(e);
     }
     return newUser;
   },
@@ -59,23 +61,31 @@ const Mutation = {
     };
     return db.users[userIndex];
   },
-  createRepo: (
+  createRepo: async (
     parent,
     args: {
       repoData: { title: string; visibility: string; developer: string };
     },
-    { db },
+    ctx,
     info
-  ): object => {
-    console.log(args.repoData);
-    const userExists: object = User.findById(args.repoData.developer);
+  ): Promise<object> => {
+    try {
+      const userExists = await User.findById(args.repoData.developer);
 
-    if (!userExists) {
-      throw new Error("No developer with this id");
+      if (!userExists) {
+        throw new Error("No developer with this id");
+      }
+    } catch (e) {
+      throw new Error(e);
     }
-    const newRepo: object = Repo.create({
-      ...args.repoData,
-    });
+    let newRepo: object;
+    try {
+      newRepo = Repo.create({
+        ...args.repoData,
+      });
+    } catch (e) {
+      throw new Error(e);
+    }
 
     return newRepo;
   },
