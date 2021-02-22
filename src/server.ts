@@ -1,4 +1,5 @@
 import { GraphQLServer } from "graphql-yoga";
+import mongoose from "mongoose";
 import db from "./db";
 import Query from "./resolvers/Query";
 import User from "./resolvers/User";
@@ -24,5 +25,12 @@ const server = new GraphQLServer({
 });
 
 server.start({ port: PORT }, () => {
-  console.log(Chalk.hex("#fab95b").bold(`The Server is Up ${PORT}`));
+  try {
+    mongoose.connect(
+      "mongodb+srv://Shubham:<password>@cluster0.wepi9.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    );
+    console.log(Chalk.hex("#fab95b").bold(`The Server is Up ${PORT}`));
+  } catch (e) {
+    console.log(e);
+  }
 });
