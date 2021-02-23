@@ -136,28 +136,32 @@ const Mutation = {
     };
     return db.repos[repoIndex];
   },
-  createComment: (
+  createComment: async (
     parent,
     args: { data: { text: string; developer: string; idOfRepo: string } },
-    { db },
+    ctx,
     info
-  ): object => {
-    const userExists: object = User.findById(args.data.developer);
-    if (!userExists) {
-      throw new Error("User doesnot exist");
-    }
-    const repoValid: object = Repo.findById(args.data.idOfRepo);
-    if (!repoValid) {
-      throw new Error("Repo is either private or doesnot exist");
-    }
+  ): Promise<object> => {
+    try {
+      const userExists: object = await User.findById(args.data.developer);
+      if (!userExists) {
+        throw new Error("User doesnot exist");
+      }
+      const repoValid = await Repo.findById(args.data.idOfRepo);
+      if (!repoValid) {
+        throw new Error("Repo is either private or doesnot exist");
+      }
+      console.log(repoValid);
+      const newComment: object = await Comment.create({
+        text: args.data.text,
+        developer: args.data.developer,
+        repoId: args.data.idOfRepo,
+      });
 
-    const newComment: object = Repo.create({
-      text: args.data.text,
-      developer: args.data.developer,
-      repoId: args.data.idOfRepo,
-    });
-
-    return newComment;
+      return newComment;
+    } catch (e) {
+      throw new Error(e);
+    }
   },
   deleteComment: (
     parent,
