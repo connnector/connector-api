@@ -17,14 +17,15 @@ const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
 const Mutation = {
     createUser: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        let existingUser;
         try {
-            const existingUser = yield User_1.default.find({ email: args.userData.email });
-            if (existingUser) {
-                throw new Error("user already exists");
-            }
+            existingUser = yield User_1.default.findOne({ email: args.userData.email });
         }
         catch (e) {
             throw new Error(e);
+        }
+        if (existingUser) {
+            throw new Error("user already exists");
         }
         let newUser;
         try {
@@ -64,6 +65,15 @@ const Mutation = {
             throw new Error(e);
         }
         let newRepo;
+        try {
+            const titleTaken = yield User_1.default.findOne({ title: args.repoData.title });
+            if (!titleTaken) {
+                throw new Error("title already taken");
+            }
+        }
+        catch (e) {
+            throw new Error(e);
+        }
         try {
             newRepo = Repo_1.default.create(Object.assign({}, args.repoData));
         }

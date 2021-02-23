@@ -81,9 +81,12 @@ const Mutation = {
     let newRepo: object;
 
     try {
-      const titleTaken = await User.findOne({ title: args.repoData.title });
+      const titleTaken = await Repo.findOne({
+        title: args.repoData.title,
+        developer: args.repoData.developer,
+      });
 
-      if (!titleTaken) {
+      if (titleTaken) {
         throw new Error("title already taken");
       }
     } catch (e) {
