@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
+import { Document } from "mongoose";
 
 const Mutation = {
   createUser: async (
@@ -147,11 +148,14 @@ const Mutation = {
       if (!userExists) {
         throw new Error("User doesnot exist");
       }
-      const repoValid = await Repo.findById(args.data.idOfRepo);
+      const repoValid = await Repo.find({
+        id: args.data.idOfRepo,
+        visibility: "public",
+      });
+      console.log(repoValid);
       if (!repoValid) {
         throw new Error("Repo is either private or doesnot exist");
       }
-      console.log(repoValid);
       const newComment: object = await Comment.create({
         text: args.data.text,
         developer: args.data.developer,

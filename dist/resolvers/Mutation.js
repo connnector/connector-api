@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
+const Comment_1 = __importDefault(require("../model/Comment"));
 const Mutation = {
     createUser: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let existingUser;
@@ -66,8 +67,11 @@ const Mutation = {
         }
         let newRepo;
         try {
-            const titleTaken = yield User_1.default.findOne({ title: args.repoData.title });
-            if (!titleTaken) {
+            const titleTaken = yield Repo_1.default.findOne({
+                title: args.repoData.title,
+                developer: args.repoData.developer,
+            });
+            if (titleTaken) {
                 throw new Error("title already taken");
             }
         }
@@ -99,22 +103,29 @@ const Mutation = {
         db.repos[repoIndex] = Object.assign(Object.assign({}, db.users[repoIndex]), args.updateData);
         return db.repos[repoIndex];
     },
-    createComment: (parent, args, { db }, info) => {
-        const userExists = User_1.default.findById(args.data.developer);
-        if (!userExists) {
-            throw new Error("User doesnot exist");
+    createComment: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const userExists = yield User_1.default.findById(args.data.developer);
+            if (!userExists) {
+                throw new Error("User doesnot exist");
+            }
+            const repoValid = yield Repo_1.default.findById(args.data.idOfRepo);
+            console.log(repoValid);
+            if (!repoValid || repoValid) {
+                throw new Error("Repo is either private or doesnot exist");
+            }
+            console.log(repoValid);
+            const newComment = yield Comment_1.default.create({
+                text: args.data.text,
+                developer: args.data.developer,
+                repoId: args.data.idOfRepo,
+            });
+            return newComment;
         }
-        const repoValid = Repo_1.default.findById(args.data.idOfRepo);
-        if (!repoValid) {
-            throw new Error("Repo is either private or doesnot exist");
+        catch (e) {
+            throw new Error(e);
         }
-        const newComment = Repo_1.default.create({
-            text: args.data.text,
-            developer: args.data.developer,
-            repoId: args.data.idOfRepo,
-        });
-        return newComment;
-    },
+    }),
     deleteComment: (parent, args, { db }, info) => {
         const commentExist = db.comments.findIndex((x) => x.id === args.commentId);
         if (commentExist === -1) {
