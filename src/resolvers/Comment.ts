@@ -1,20 +1,29 @@
+import User from "../model/User";
+import Repo from "../model/Repo";
 const Comment = {
-  repo: (parent, args, { db }, info): object => {
-    return db.repos.find((x) => x.id === parent.repoId);
-  },
-  developer: (
+  repo: async (
     parent: { id: string; text: string; repoId: string; developer: string },
     args,
-    { db },
+    ctx,
     info
-  ): object => {
-    const developerExists: number = db.users.findIndex(
-      (x) => x.id === parent.developer
-    );
-    if (developerExists === -1) {
-      throw new Error("Developer doesnot exist");
+  ): Promise<object> => {
+    try {
+      return await Repo.findById(parent.repoId);
+    } catch (e) {
+      throw new Error(e);
     }
-    return db.users[developerExists];
+  },
+  developer: async (
+    parent: { id: string; text: string; repoId: string; developer: string },
+    args,
+    ctx,
+    info
+  ): Promise<object> => {
+    try {
+      return await User.findById(parent.developer);
+    } catch (e) {
+      throw new Error(e);
+    }
   },
 };
 
