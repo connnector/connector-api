@@ -54,9 +54,21 @@ const Query = {
       throw new Error(e);
     }
   },
-  repoById: (parent, args, { db }, info): object => {
-    const reqRepo: {} = db.repos.find((x) => x.id === args.idQuery);
-    return reqRepo;
+  repoById: async (
+    parent,
+    args: { idQuery: string },
+    ctx,
+    info
+  ): Promise<Document<object>> => {
+    try {
+      const reqRepo: Document<object> = await Repo.findById(args.idQuery);
+      if (!reqRepo) {
+        throw new Error("Wrong id");
+      }
+      return reqRepo;
+    } catch (e) {
+      throw new Error(e);
+    }
   },
   comments: (parent, args: { idOfRepo: string }, { db }, info): [object] => {
     const repoExists: number = db.repos.findIndex(
