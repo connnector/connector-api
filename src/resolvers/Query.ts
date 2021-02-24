@@ -70,23 +70,30 @@ const Query = {
       throw new Error(e);
     }
   },
-  comments: (parent, args: { idOfRepo: string }, { db }, info): [object] => {
-    const repoExists: number = db.repos.findIndex(
-      (x) => x.id === args.idOfRepo
-    );
-
-    if (repoExists === -1) {
-      throw new Error("Repo Does Not Exist");
+  comments: async (
+    parent,
+    args: { idOfRepo: string },
+    ctx,
+    info
+  ): Promise<Document<object>[]> => {
+    try {
+      const repoExists: Document<object> = await Repo.findOne({
+        _id: args.idOfRepo,
+        visibility: "public",
+      });
+      if (!repoExists) {
+        throw new Error("Repo Does Not Exist or is private");
+      }
+      const comments: Document<object>[] = await Comment.find({
+        repoId: args.idOfRepo,
+      });
+      if (comments.length === 0) {
+        throw new Error("No comments on this post");
+      }
+      return comments;
+    } catch (e) {
+      throw new Error(e);
     }
-    if (db.repos[repoExists].visibility === "private") {
-      throw new Error("repo is private");
-    }
-
-    const comments: [object] = db.comments.filter(
-      (x) => x.repoId === args.idOfRepo
-    );
-
-    return comments;
   },
 };
 
