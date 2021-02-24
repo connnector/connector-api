@@ -168,22 +168,23 @@ const Mutation = {
       throw new Error(e);
     }
   },
-  deleteComment: (
+  deleteComment: async (
     parent,
     args: { commentId: string },
-    { db },
+    ctx,
     info
-  ): object => {
-    const commentExist: number = db.comments.findIndex(
-      (x) => x.id === args.commentId
-    );
-    if (commentExist === -1) {
-      throw new Error("Comment doesNot exist");
+  ): Promise<object> => {
+    try {
+      const existingComment: object = await Comment.findByIdAndDelete(
+        args.commentId
+      );
+      if (!existingComment) {
+        throw new Error("Comment Not Found");
+      }
+      return existingComment;
+    } catch (e) {
+      throw new Error(e);
     }
-
-    const deletedComment = db.comments.splice(commentExist, 1);
-
-    return deletedComment;
   },
   updateComment: (
     parent,

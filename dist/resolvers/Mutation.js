@@ -88,15 +88,18 @@ const Mutation = {
         }
         return newRepo;
     }),
-    deleteRepo: (parent, args, { db }, info) => {
-        const existingRepoIndex = db.repos.findIndex((x) => x.id === args.repoId);
-        if (existingRepoIndex === -1) {
-            throw new Error("Repo Not Found");
+    deleteRepo: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const existingRepo = yield Repo_1.default.findByIdAndDelete(args.repoId);
+            if (!existingRepo) {
+                throw new Error("Repo Not Found");
+            }
+            return existingRepo;
         }
-        const requiredRepo = db.repos[existingRepoIndex];
-        db.repos = db.repos.splice(existingRepoIndex, 1);
-        return requiredRepo;
-    },
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
     updateRepo: (parent, args, { db }, info) => {
         const repoIndex = db.repos.findIndex((x) => x.id === args.repoId);
         if (repoIndex === -1) {
