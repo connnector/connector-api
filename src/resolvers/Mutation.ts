@@ -195,25 +195,23 @@ const Mutation = {
       throw new Error(e);
     }
   },
-  updateComment: (
+  updateComment: async (
     parent,
-    args: { data: { commentId: string; text: string } },
-    { db },
+    args: { commentId: string; data: { text: string } },
+    ctx,
     info
-  ): object => {
-    const commentExist: number = db.comments.findIndex(
-      (x) => x.id === args.data.commentId
-    );
-    if (commentExist === -1) {
-      throw new Error("Comment doesNot exist");
+  ): Promise<object> => {
+    try {
+      let reqComment = await Comment.findByIdAndUpdate(args.commentId, {
+        ...args.data,
+      });
+      if (!reqComment) {
+        throw new Error("Comment not found or invalid update fields");
+      }
+      return reqComment;
+    } catch (e) {
+      throw new Error(e);
     }
-
-    db.comments[commentExist] = {
-      ...db.comments[commentExist],
-      text: args.data.text,
-    };
-
-    return db.comments[commentExist];
   },
 };
 
