@@ -21,9 +21,21 @@ const Query = {
       throw new Error(e);
     }
   },
-  userById: (parent, args: { idQuery: string }, { db }, info): object => {
-    const reqUser: {} = db.users.find((x) => x.id === args.idQuery);
-    return reqUser;
+  userById: async (
+    parent,
+    args: { idQuery: string },
+    ctx,
+    info
+  ): Promise<Document<object>> => {
+    try {
+      const reqUser: Document<object> = await User.findById(args.idQuery);
+      if (!reqUser) {
+        throw new Error("Wrong id");
+      }
+      return reqUser;
+    } catch (e) {
+      throw new Error(e);
+    }
   },
   repos: (parent, args: { nameQuery: string }, { db }, info): [object] => {
     if (!args.nameQuery) {
