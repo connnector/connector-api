@@ -37,16 +37,18 @@ const Mutation = {
         }
         return newUser;
     }),
-    deleteUser: (parent, args, { db }, info) => {
-        const existingUserIndex = db.users.findIndex((x) => x.id === args.userId);
-        if (existingUserIndex === -1) {
-            throw new Error("User Does Not exist");
+    deleteUser: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const existingUser = yield User_1.default.findByIdAndDelete(args.userId);
+            if (!existingUser) {
+                throw new Error("User Does Not exist");
+            }
+            return existingUser;
         }
-        const requiredUser = db.users[existingUserIndex];
-        db.repos = db.repos.filter((x) => x.developer !== requiredUser.id);
-        db.users = db.users.splice(existingUserIndex, 1);
-        return requiredUser;
-    },
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
     updateUser: (parent, args, { db }, info) => {
         const userIndex = db.users.findIndex((x) => x.id === args.userId);
         if (userIndex === -1) {
@@ -109,12 +111,14 @@ const Mutation = {
             if (!userExists) {
                 throw new Error("User doesnot exist");
             }
-            const repoValid = yield Repo_1.default.findById(args.data.idOfRepo);
+            const repoValid = yield Repo_1.default.find({
+                id: args.data.idOfRepo,
+                visibility: "public",
+            });
             console.log(repoValid);
-            if (!repoValid || repoValid) {
+            if (!repoValid) {
                 throw new Error("Repo is either private or doesnot exist");
             }
-            console.log(repoValid);
             const newComment = yield Comment_1.default.create({
                 text: args.data.text,
                 developer: args.data.developer,

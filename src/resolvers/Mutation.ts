@@ -106,22 +106,21 @@ const Mutation = {
 
     return newRepo;
   },
-  deleteRepo: (parent, args: { repoId: string }, { db }, info): object => {
-    const existingRepoIndex: number = db.repos.findIndex(
-      (x) => x.id === args.repoId
-    );
-    if (existingRepoIndex === -1) {
-      throw new Error("Repo Not Found");
+  deleteRepo: async (
+    parent,
+    args: { repoId: string },
+    ctx,
+    info
+  ): Promise<object> => {
+    try {
+      const existingRepo: object = await Repo.findByIdAndDelete(args.repoId);
+      if (!existingRepo) {
+        throw new Error("Repo Not Found");
+      }
+      return existingRepo;
+    } catch (e) {
+      throw new Error(e);
     }
-    const requiredRepo: {
-      id: string;
-      title: string;
-      developer: string;
-      visibility: string;
-    } = db.repos[existingRepoIndex];
-    db.repos = db.repos.splice(existingRepoIndex, 1);
-
-    return requiredRepo;
   },
   updateRepo: (
     parent,
