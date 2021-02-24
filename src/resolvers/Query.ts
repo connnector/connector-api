@@ -37,27 +37,21 @@ const Query = {
       throw new Error(e);
     }
   },
-  repos: (parent, args: { nameQuery: string }, { db }, info): [object] => {
-    if (!args.nameQuery) {
-      return db.repos.filter((x) => x.visibility === "public");
-    } else if (args.nameQuery) {
-      return db.repos.filter((x) => {
-        let k: number = 0;
-        for (let i: number = 0; i < x.title.length; i++) {
-          for (let j: number = 0; j < args.nameQuery.length; j++) {
-            if (x.title[i + j] !== args.nameQuery[j]) {
-              k = 0;
-              break;
-            }
-            k++;
-            if (k === args.nameQuery.length) {
-              if (x.visibility !== "private") {
-                return x;
-              }
-            }
-          }
-        }
-      });
+  repos: async (
+    parent,
+    args: { nameQuery: string },
+    ctx,
+    info
+  ): Promise<Document<any>[]> => {
+    let allRepos: Document<any>[];
+    try {
+      allRepos = await Repo.find({});
+      if (allRepos.length === 0) {
+        throw new Error("No Repos");
+      }
+      return allRepos;
+    } catch (e) {
+      throw new Error(e);
     }
   },
   repoById: (parent, args, { db }, info): object => {
