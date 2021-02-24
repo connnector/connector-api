@@ -55,6 +55,12 @@ const Mutation = {
     info
   ): Promise<object> => {
     try {
+      if (args.updateData.email) {
+        const emailTaken = await User.findOne({ email: args.updateData.email });
+        if (emailTaken) {
+          throw new Error("Email Already taken");
+        }
+      }
       const reqUser: object = await User.findByIdAndUpdate(args.userId, {
         ...args.updateData,
       });
