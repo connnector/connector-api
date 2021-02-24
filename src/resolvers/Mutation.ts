@@ -130,21 +130,23 @@ const Mutation = {
       throw new Error(e);
     }
   },
-  updateRepo: (
+  updateRepo: async (
     parent,
     args: { repoId: string; updateData: { title: string; visibility: string } },
-    { db },
+    db,
     info
-  ): object => {
-    const repoIndex = db.repos.findIndex((x) => x.id === args.repoId);
-    if (repoIndex === -1) {
-      throw new Error("Repo not found");
+  ): Promise<object> => {
+    try {
+      let reqRepo = await Repo.findByIdAndUpdate(args.repoId, {
+        ...args.updateData,
+      });
+      if (!reqRepo) {
+        throw new Error("Repo not found or invalid update fields");
+      }
+      return reqRepo;
+    } catch (e) {
+      throw new Error(e);
     }
-    db.repos[repoIndex] = {
-      ...db.users[repoIndex],
-      ...args.updateData,
-    };
-    return db.repos[repoIndex];
   },
   createComment: async (
     parent,
