@@ -1,23 +1,24 @@
+import User from "../model/User";
+import Repo from "../model/Repo";
+import Comment from "../model/Comment";
+import { Document } from "mongoose";
+
 const Query = {
-  users: (parent, args: { nameQuery: string }, { db }, info): [object] => {
-    if (!args.nameQuery) {
-      return db.users;
-    } else if (args.nameQuery) {
-      return db.users.filter((x) => {
-        let k: number = 0;
-        for (let i: number = 0; i < x.name.length; i++) {
-          for (let j: number = 0; j < args.nameQuery.length; j++) {
-            if (x.name[i + j] !== args.nameQuery[j]) {
-              k = 0;
-              break;
-            }
-            k++;
-            if (k === args.nameQuery.length) {
-              return x;
-            }
-          }
-        }
-      });
+  users: async (
+    parent,
+    args: { nameQuery: string },
+    ctx,
+    info
+  ): Promise<Document<any>[]> => {
+    let allUsers: Document<any>[];
+    try {
+      allUsers = await User.find({});
+      if (allUsers.length === 0) {
+        throw new Error("No users");
+      }
+      return allUsers;
+    } catch (e) {
+      throw new Error(e);
     }
   },
   userById: (parent, args: { idQuery: string }, { db }, info): object => {
