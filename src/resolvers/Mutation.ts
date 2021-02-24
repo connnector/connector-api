@@ -48,21 +48,23 @@ const Mutation = {
       throw new Error(e);
     }
   },
-  updateUser: (
+  updateUser: async (
     parent,
     args: { userId: string; updateData: { name: string; email: string } },
-    { db },
+    ctx,
     info
-  ): object => {
-    const userIndex = db.users.findIndex((x) => x.id === args.userId);
-    if (userIndex === -1) {
-      throw new Error("User not found");
+  ): Promise<object> => {
+    try {
+      const reqUser: object = await User.findByIdAndUpdate(args.userId, {
+        ...args.updateData,
+      });
+      if (!reqUser) {
+        throw new Error("User not found");
+      }
+      return reqUser;
+    } catch (e) {
+      throw new Error(e);
     }
-    db.users[userIndex] = {
-      ...db.users[userIndex],
-      ...args.updateData,
-    };
-    return db.users[userIndex];
   },
   createRepo: async (
     parent,
@@ -153,7 +155,6 @@ const Mutation = {
         id: args.data.idOfRepo,
         visibility: "public",
       });
-      console.log(repoValid);
       if (!repoValid) {
         throw new Error("Repo is either private or doesnot exist");
       }
