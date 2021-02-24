@@ -32,19 +32,21 @@ const Mutation = {
     }
     return newUser;
   },
-  deleteUser: (parent, args: { userId: string }, { db }, info): object => {
-    const existingUserIndex: number = db.users.findIndex(
-      (x) => x.id === args.userId
-    );
-    if (existingUserIndex === -1) {
-      throw new Error("User Does Not exist");
+  deleteUser: async (
+    parent,
+    args: { userId: string },
+    ctx,
+    info
+  ): Promise<object> => {
+    try {
+      const existingUser: object = await User.findByIdAndDelete(args.userId);
+      if (!existingUser) {
+        throw new Error("User Does Not exist");
+      }
+      return existingUser;
+    } catch (e) {
+      throw new Error(e);
     }
-    const requiredUser: { id: string; name: string; email: string } =
-      db.users[existingUserIndex];
-    db.repos = db.repos.filter((x) => x.developer !== requiredUser.id);
-    db.users = db.users.splice(existingUserIndex, 1);
-
-    return requiredUser;
   },
   updateUser: (
     parent,
