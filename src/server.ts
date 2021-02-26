@@ -1,6 +1,5 @@
 import { GraphQLServer } from "graphql-yoga";
 import mongoose from "mongoose";
-import db from "./db";
 import Query from "./resolvers/Query";
 import User from "./resolvers/User";
 import Repo from "./resolvers/Repo";
@@ -19,9 +18,7 @@ const server = new GraphQLServer({
     Mutation,
     Comment,
   },
-  context: {
-    db,
-  },
+  context: {},
 });
 
 mongoose

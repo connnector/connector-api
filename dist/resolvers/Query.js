@@ -1,72 +1,93 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
+const User_1 = __importDefault(require("../model/User"));
+const Repo_1 = __importDefault(require("../model/Repo"));
+const Comment_1 = __importDefault(require("../model/Comment"));
 const Query = {
-    users: (parent, args, { db }, info) => {
-        if (!args.nameQuery) {
-            return db.users;
+    users: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        let allUsers;
+        try {
+            allUsers = yield User_1.default.find({});
+            if (allUsers.length === 0) {
+                throw new Error("No users");
+            }
+            return allUsers;
         }
-        else if (args.nameQuery) {
-            return db.users.filter((x) => {
-                let k = 0;
-                for (let i = 0; i < x.name.length; i++) {
-                    for (let j = 0; j < args.nameQuery.length; j++) {
-                        if (x.name[i + j] !== args.nameQuery[j]) {
-                            k = 0;
-                            break;
-                        }
-                        k++;
-                        if (k === args.nameQuery.length) {
-                            return x;
-                        }
-                    }
-                }
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
+    userById: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const reqUser = yield User_1.default.findById(args.idQuery);
+            if (!reqUser) {
+                throw new Error("Wrong id");
+            }
+            return reqUser;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
+    repos: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        let allRepos;
+        try {
+            allRepos = yield Repo_1.default.find({ visibility: "public" });
+            if (allRepos.length === 0) {
+                throw new Error("No Repos");
+            }
+            return allRepos;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
+    repoById: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const reqRepo = yield Repo_1.default.findById(args.idQuery);
+            if (!reqRepo) {
+                throw new Error("Wrong id");
+            }
+            return reqRepo;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
+    comments: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const repoExists = yield Repo_1.default.findOne({
+                _id: args.idOfRepo,
+                visibility: "public",
             });
-        }
-    },
-    userById: (parent, args, { db }, info) => {
-        const reqUser = db.users.find((x) => x.id === args.idQuery);
-        return reqUser;
-    },
-    repos: (parent, args, { db }, info) => {
-        if (!args.nameQuery) {
-            return db.repos.filter((x) => x.visibility === "public");
-        }
-        else if (args.nameQuery) {
-            return db.repos.filter((x) => {
-                let k = 0;
-                for (let i = 0; i < x.title.length; i++) {
-                    for (let j = 0; j < args.nameQuery.length; j++) {
-                        if (x.title[i + j] !== args.nameQuery[j]) {
-                            k = 0;
-                            break;
-                        }
-                        k++;
-                        if (k === args.nameQuery.length) {
-                            if (x.visibility !== "private") {
-                                return x;
-                            }
-                        }
-                    }
-                }
+            if (!repoExists) {
+                throw new Error("Repo Does Not Exist or is private");
+            }
+            const comments = yield Comment_1.default.find({
+                repoId: args.idOfRepo,
             });
+            if (comments.length === 0) {
+                throw new Error("No comments on this post");
+            }
+            return comments;
         }
-    },
-    repoById: (parent, args, { db }, info) => {
-        const reqRepo = db.repos.find((x) => x.id === args.idQuery);
-        return reqRepo;
-    },
-    comments: (parent, args, { db }, info) => {
-        const repoExists = db.repos.findIndex((x) => x.id === args.idOfRepo);
-        if (repoExists === -1) {
-            throw new Error("Repo Does Not Exist");
+        catch (e) {
+            throw new Error(e);
         }
-        if (db.repos[repoExists].visibility === "private") {
-            throw new Error("repo is private");
-        }
-        const comments = db.comments.filter((x) => x.repoId === args.idOfRepo);
-        return comments;
-    },
+    }),
 };
 exports.default = Query;
 //# sourceMappingURL=Query.js.map

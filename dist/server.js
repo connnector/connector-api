@@ -27,7 +27,7 @@ const server = new graphql_yoga_1.GraphQLServer({
     },
 });
 mongoose_1.default
-    .connect("mongodb+srv://Johnny:iamjohnnyboy@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect("mongodb+srv://Johnny:iamjohnnyboy@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => {
     server.start({ port: PORT }, () => {
         console.log(chalk_1.default.hex("#fab95b").bold(`The Server is Up ${PORT}`));

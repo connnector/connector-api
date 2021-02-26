@@ -45,7 +45,7 @@ const Query = {
   ): Promise<Document<any>[]> => {
     let allRepos: Document<any>[];
     try {
-      allRepos = await Repo.find({});
+      allRepos = await Repo.find({ visibility: "public" });
       if (allRepos.length === 0) {
         throw new Error("No Repos");
       }

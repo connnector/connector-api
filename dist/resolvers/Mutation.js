@@ -49,14 +49,24 @@ const Mutation = {
             throw new Error(e);
         }
     }),
-    updateUser: (parent, args, { db }, info) => {
-        const userIndex = db.users.findIndex((x) => x.id === args.userId);
-        if (userIndex === -1) {
-            throw new Error("User not found");
+    updateUser: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            if (args.updateData.email) {
+                const emailTaken = yield User_1.default.findOne({ email: args.updateData.email });
+                if (emailTaken) {
+                    throw new Error("Email Already taken");
+                }
+            }
+            const reqUser = yield User_1.default.findByIdAndUpdate(args.userId, Object.assign({}, args.updateData));
+            if (!reqUser) {
+                throw new Error("User not found");
+            }
+            return reqUser;
         }
-        db.users[userIndex] = Object.assign(Object.assign({}, db.users[userIndex]), args.updateData);
-        return db.users[userIndex];
-    },
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
     createRepo: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const userExists = yield User_1.default.findById(args.repoData.developer);
@@ -100,14 +110,18 @@ const Mutation = {
             throw new Error(e);
         }
     }),
-    updateRepo: (parent, args, { db }, info) => {
-        const repoIndex = db.repos.findIndex((x) => x.id === args.repoId);
-        if (repoIndex === -1) {
-            throw new Error("Repo not found");
+    updateRepo: (parent, args, db, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            let reqRepo = yield Repo_1.default.findByIdAndUpdate(args.repoId, Object.assign({}, args.updateData));
+            if (!reqRepo) {
+                throw new Error("Repo not found or invalid update fields");
+            }
+            return reqRepo;
         }
-        db.repos[repoIndex] = Object.assign(Object.assign({}, db.users[repoIndex]), args.updateData);
-        return db.repos[repoIndex];
-    },
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
     createComment: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const userExists = yield User_1.default.findById(args.data.developer);
@@ -118,7 +132,6 @@ const Mutation = {
                 id: args.data.idOfRepo,
                 visibility: "public",
             });
-            console.log(repoValid);
             if (!repoValid) {
                 throw new Error("Repo is either private or doesnot exist");
             }
@@ -133,22 +146,30 @@ const Mutation = {
             throw new Error(e);
         }
     }),
-    deleteComment: (parent, args, { db }, info) => {
-        const commentExist = db.comments.findIndex((x) => x.id === args.commentId);
-        if (commentExist === -1) {
-            throw new Error("Comment doesNot exist");
+    deleteComment: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const existingComment = yield Comment_1.default.findByIdAndDelete(args.commentId);
+            if (!existingComment) {
+                throw new Error("Comment Not Found");
+            }
+            return existingComment;
         }
-        const deletedComment = db.comments.splice(commentExist, 1);
-        return deletedComment;
-    },
-    updateComment: (parent, args, { db }, info) => {
-        const commentExist = db.comments.findIndex((x) => x.id === args.data.commentId);
-        if (commentExist === -1) {
-            throw new Error("Comment doesNot exist");
+        catch (e) {
+            throw new Error(e);
         }
-        db.comments[commentExist] = Object.assign(Object.assign({}, db.comments[commentExist]), { text: args.data.text });
-        return db.comments[commentExist];
-    },
+    }),
+    updateComment: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            let reqComment = yield Comment_1.default.findByIdAndUpdate(args.commentId, Object.assign({}, args.data));
+            if (!reqComment) {
+                throw new Error("Comment not found or invalid update fields");
+            }
+            return reqComment;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
 };
 exports.default = Mutation;
 //# sourceMappingURL=Mutation.js.map
