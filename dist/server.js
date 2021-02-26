@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const graphql_yoga_1 = require("graphql-yoga");
 const mongoose_1 = __importDefault(require("mongoose"));
-const db_1 = __importDefault(require("./db"));
 const Query_1 = __importDefault(require("./resolvers/Query"));
 const User_1 = __importDefault(require("./resolvers/User"));
 const Repo_1 = __importDefault(require("./resolvers/Repo"));
@@ -22,9 +21,7 @@ const server = new graphql_yoga_1.GraphQLServer({
         Mutation: Mutation_1.default,
         Comment: Comment_1.default,
     },
-    context: {
-        db: db_1.default,
-    },
+    context: {},
 });
 mongoose_1.default
     .connect("mongodb+srv://Johnny:iamjohnnyboy@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })

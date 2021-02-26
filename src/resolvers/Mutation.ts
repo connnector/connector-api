@@ -1,13 +1,14 @@
-import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
 import { Document } from "mongoose";
+import jwt from "jsonwebtoken";
 
 const Mutation = {
-  createUser: async (
+  signUp: async (
     parent,
-    args: { userData: { name: string; email: string } },
+    args: { userData: { name: string; email: string; password: string } },
     ctx,
     info
   ): Promise<object> => {
@@ -21,16 +22,32 @@ const Mutation = {
     if (existingUser) {
       throw new Error("user already exists");
     }
-
+    let hashedPassword: string;
+    try {
+      hashedPassword = await bcrypt.hash(args.userData.password, 12);
+    } catch (e) {
+      throw new Error();
+    }
     let newUser: object;
+
+    const token = jwt.sign(
+      { name: args.userData.name, email: args.userData.email },
+      "unexpectable bitch"
+    );
     try {
       newUser = await User.create({
         ...args.userData,
+        password: hashedPassword,
       });
     } catch (e) {
       throw new Error(e);
     }
-    return newUser;
+    const returnData: object = {
+      user: newUser,
+      token,
+      expirationTime: 1,
+    };
+    return returnData;
   },
   deleteUser: async (
     parent,

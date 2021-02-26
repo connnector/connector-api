@@ -13,11 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
 const Comment_1 = __importDefault(require("../model/Comment"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Mutation = {
-    createUser: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+    signUp: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let existingUser;
         try {
             existingUser = yield User_1.default.findOne({ email: args.userData.email });
@@ -28,14 +30,27 @@ const Mutation = {
         if (existingUser) {
             throw new Error("user already exists");
         }
-        let newUser;
+        let hashedPassword;
         try {
-            newUser = yield User_1.default.create(Object.assign({}, args.userData));
+            hashedPassword = bcryptjs_1.default.hash(args.userData.password, 12);
+        }
+        catch (e) {
+            throw new Error();
+        }
+        let newUser;
+        const token = jsonwebtoken_1.default.sign({ name: args.userData.name, email: args.userData.email }, "unexpectable bitch");
+        try {
+            newUser = yield User_1.default.create(Object.assign(Object.assign({}, args.userData), { password: hashedPassword }));
         }
         catch (e) {
             throw new Error(e);
         }
-        return newUser;
+        const returnData = {
+            user: newUser,
+            token,
+            expirationTime: 1,
+        };
+        return returnData;
     }),
     deleteUser: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
