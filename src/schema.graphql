@@ -4,6 +4,7 @@ type Query {
   comments(idOfRepo: ID!): [Comment!]!
   userById(idQuery: ID!): User!
   repoById(idQuery: ID!): Repo!
+  login(data: input_login_data): AuthData!
 }
 
 type Mutation {
@@ -24,6 +25,17 @@ type User {
   email: String!
   repos(visibility: visibilityQuery!): [Repo]!
   comments(idOfRepo: ID!): [Comment]!
+}
+
+input input_login_data {
+  email: String!
+  password: String!
+}
+
+type AuthData {
+  id: ID!
+  token: String!
+  expirationTime: Int!
 }
 
 type Repo {
