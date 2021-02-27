@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
-import { Document } from "mongoose";
 import jwt from "jsonwebtoken";
 
 const Mutation = {

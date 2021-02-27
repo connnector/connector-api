@@ -1,9 +1,42 @@
 import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
-import { Document } from "mongoose";
+import { Document, Model, Mongoose } from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const Query = {
+  login: async (
+    parent,
+    args: { email: string; password: string },
+    ctx,
+    info
+  ): Promise<object> => {
+    try {
+      const existingUser: any = await User.findOne({ email: args.email });
+      if (!existingUser) {
+        throw new Error("User doesNot exist");
+      }
+      console.log(existingUser.password);
+      const match = await bcrypt.compare(args.password, existingUser.password);
+      if (!match) {
+        throw new Error("Incorrect password");
+      }
+      const token = jwt.sign(
+        { name: existingUser.name, email: existingUser.email },
+        "unexpectable bitch"
+      );
+
+      const returnData: object = {
+        user: existingUser,
+        token,
+        expirationTime: 1,
+      };
+      return returnData;
+    } catch (e) {
+      throw new Error(e);
+    }
+  },
   users: async (
     parent,
     args: { nameQuery: string },

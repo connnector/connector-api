@@ -32,7 +32,7 @@ const Mutation = {
         }
         let hashedPassword;
         try {
-            hashedPassword = bcryptjs_1.default.hash(args.userData.password, 12);
+            hashedPassword = yield bcryptjs_1.default.hash(args.userData.password, 12);
         }
         catch (e) {
             throw new Error();

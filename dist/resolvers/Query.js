@@ -16,7 +16,31 @@ exports.default = void 0;
 const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
 const Comment_1 = __importDefault(require("../model/Comment"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const Query = {
+    login: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const existingUser = yield User_1.default.findOne({ email: args.email });
+            if (!existingUser) {
+                throw new Error("User doesNot exist");
+            }
+            const match = yield bcryptjs_1.default.compare(existingUser.password, args.password);
+            if (!match) {
+                throw new Error("Incorrect password");
+            }
+            const token = jsonwebtoken_1.default.sign({ name: existingUser.name, email: existingUser.email }, "unexpectable bitch");
+            const returnData = {
+                user: existingUser,
+                token,
+                expirationTime: 1,
+            };
+            return returnData;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
     users: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let allUsers;
         try {

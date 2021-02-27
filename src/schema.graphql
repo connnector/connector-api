@@ -4,10 +4,11 @@ type Query {
   comments(idOfRepo: ID!): [Comment!]!
   userById(idQuery: ID!): User!
   repoById(idQuery: ID!): Repo!
+  login(email: String!, password: String!): auth_data!
 }
 
 type Mutation {
-  signUp(userData: signup_data!): signup_auth_data!
+  signUp(userData: signup_data!): auth_data!
   deleteUser(userId: ID!): User!
   updateUser(userId: ID!, updateData: update_user_data!): User!
   createRepo(repoData: create_repo_data!): Repo!
@@ -82,7 +83,7 @@ input update_comment_data {
   text: String!
 }
 
-type signup_auth_data {
+type auth_data {
   user: User!
   token: String!
   expirationTime: Int!
