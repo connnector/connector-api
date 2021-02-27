@@ -25,7 +25,8 @@ const Query = {
             if (!existingUser) {
                 throw new Error("User doesNot exist");
             }
-            const match = yield bcryptjs_1.default.compare(existingUser.password, args.password);
+            console.log(existingUser.password);
+            const match = yield bcryptjs_1.default.compare(args.password, existingUser.password);
             if (!match) {
                 throw new Error("Incorrect password");
             }
