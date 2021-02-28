@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 const User_1 = __importDefault(require("../model/User"));
+const Comment_1 = __importDefault(require("../model/Comment"));
 const Repo = {
     developer: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -24,9 +25,15 @@ const Repo = {
             throw new Error(e);
         }
     }),
-    comments: (parent, args, { db }, info) => {
-        return db.comments.filter((x) => x.repoId === parent.id);
-    },
+    comments: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const comments = yield Comment_1.default.find({ repoId: parent._id });
+            return comments;
+        }
+        catch (e) {
+            throw new Error(e);
+        }
+    }),
 };
 exports.default = Repo;
 //# sourceMappingURL=Repo.js.map

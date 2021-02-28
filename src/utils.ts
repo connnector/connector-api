@@ -11,10 +11,11 @@ export const getUserId = (ctx: Context) => {
     const { userId } = jwt.verify(token, process.env.SECRET) as {
       userId: string;
     };
+    console.log(userId);
     return userId;
   }
 
-  throw new AuthError();
+  return null;
 };
 
 export class AuthError extends Error {

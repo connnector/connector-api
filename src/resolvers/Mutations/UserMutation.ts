@@ -25,12 +25,8 @@ export const signUp = async (
   } catch (e) {
     throw new Error();
   }
-  let newUser: object;
+  let newUser: any;
 
-  const token = jwt.sign(
-    { name: args.userData.name, email: args.userData.email },
-    process.env.SECRET
-  );
   try {
     newUser = await User.create({
       ...args.userData,
@@ -39,6 +35,10 @@ export const signUp = async (
   } catch (e) {
     throw new Error(e);
   }
+  const token = jwt.sign(
+    { userId: newUser._id, email: newUser.email },
+    process.env.SECRET
+  );
   const returnData: object = {
     user: newUser,
     token,
