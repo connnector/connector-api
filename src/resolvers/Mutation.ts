@@ -49,70 +49,69 @@ const Mutation = {
     };
     return returnData;
   },
-  deleteUser: async (
-    parent,
-    args: { userId: string },
-    ctx,
-    info
-  ): Promise<object> => {
-    try {
-      const existingUser: object = await User.findByIdAndDelete(args.userId);
-      if (!existingUser) {
-        throw new Error("User Does Not exist");
+  deleteUser: async (parent, args, ctx: Context, info): Promise<object> => {
+    let id = getUserId(ctx);
+    if (id) {
+      try {
+        const existingUser: object = await User.findByIdAndDelete(id);
+        if (!existingUser) {
+          throw new Error("User Does Not exist");
+        }
+        return existingUser;
+      } catch (e) {
+        throw new Error(e);
       }
-      return existingUser;
-    } catch (e) {
-      throw new Error(e);
+    } else {
+      throw new AuthError();
     }
   },
   updateUser: async (
     parent,
-    args: { userId: string; updateData: { name: string; email: string } },
-    ctx,
+    args: { updateData: { name: string; email: string } },
+    ctx: Context,
     info
   ): Promise<object> => {
-    try {
-      if (args.updateData.email) {
-        const emailTaken = await User.findOne({ email: args.updateData.email });
-        if (emailTaken) {
-          throw new Error("Email Already taken");
+    let id = getUserId(ctx);
+    if (id) {
+      try {
+        if (args.updateData.email) {
+          const emailTaken = await User.findOne({
+            email: args.updateData.email,
+          });
+          if (emailTaken) {
+            throw new Error("Email Already taken");
+          }
         }
+        const reqUser: object = await User.findByIdAndUpdate(id, {
+          ...args.updateData,
+        });
+        if (!reqUser) {
+          throw new Error("User not found");
+        }
+        return reqUser;
+      } catch (e) {
+        throw new Error(e);
       }
-      const reqUser: object = await User.findByIdAndUpdate(args.userId, {
-        ...args.updateData,
-      });
-      if (!reqUser) {
-        throw new Error("User not found");
-      }
-      return reqUser;
-    } catch (e) {
-      throw new Error(e);
+    } else {
+      throw new AuthError();
     }
   },
   createRepo: async (
     parent,
     args: {
-      repoData: { title: string; visibility: string; developer: string };
+      repoData: { title: string; visibility: string };
     },
     ctx: Context,
     info
   ): Promise<object> => {
-    if (getUserId(ctx)) {
-      try {
-        const userExists = await User.findById(args.repoData.developer);
-
-        if (!userExists) {
-          throw new Error("No developer with this id");
-        }
-      } catch (e) {
-        throw new Error(e);
-      }
+    let id = getUserId(ctx);
+    if (id) {
       let newRepo: object;
 
       try {
         const titleTaken = await Repo.findOne({
           title: args.repoData.title,
-          developer: args.repoData.developer,
+          developer: id,
         });
 
         if (titleTaken) {
@@ -138,102 +137,122 @@ const Mutation = {
   deleteRepo: async (
     parent,
     args: { repoId: string },
-    ctx,
+    ctx: Context,
     info
   ): Promise<object> => {
-    try {
-      const existingRepo: object = await Repo.findByIdAndDelete(args.repoId);
-      if (!existingRepo) {
-        throw new Error("Repo Not Found");
+    let id = getUserId(ctx);
+    if (id) {
+      try {
+        const existingRepo: object = await Repo.findByIdAndDelete(args.repoId);
+        if (!existingRepo) {
+          throw new Error("Repo Not Found");
+        }
+        return existingRepo;
+      } catch (e) {
+        throw new Error(e);
       }
-      return existingRepo;
-    } catch (e) {
-      throw new Error(e);
+    } else {
+      throw new AuthError();
     }
   },
   updateRepo: async (
     parent,
     args: { repoId: string; updateData: { title: string; visibility: string } },
-    db,
+    ctx: Context,
     info
   ): Promise<object> => {
-    try {
-      let reqRepo = await Repo.findByIdAndUpdate(args.repoId, {
-        ...args.updateData,
-      });
-      if (!reqRepo) {
-        throw new Error("Repo not found or invalid update fields");
+    let id = getUserId(ctx);
+    if (id) {
+      try {
+        let reqRepo = await Repo.findByIdAndUpdate(args.repoId, {
+          ...args.updateData,
+        });
+        if (!reqRepo) {
+          throw new Error("Repo not found or invalid update fields");
+        }
+        return reqRepo;
+      } catch (e) {
+        throw new Error(e);
       }
-      return reqRepo;
-    } catch (e) {
-      throw new Error(e);
+    } else {
+      throw new AuthError();
     }
   },
   createComment: async (
     parent,
-    args: { data: { text: string; developer: string; idOfRepo: string } },
-    ctx,
+    args: { data: { text: string; idOfRepo: string } },
+    ctx: Context,
     info
   ): Promise<object> => {
-    try {
-      const userExists: object = await User.findById(args.data.developer);
-      if (!userExists) {
-        throw new Error("User doesnot exist");
-      }
-      const repoValid = await Repo.find({
-        id: args.data.idOfRepo,
-        visibility: "public",
-      });
-      if (!repoValid) {
-        throw new Error("Repo is either private or doesnot exist");
-      }
-      const newComment: object = await Comment.create({
-        text: args.data.text,
-        developer: args.data.developer,
-        repoId: args.data.idOfRepo,
-      });
+    let id = getUserId(ctx);
+    if (id) {
+      try {
+        const repoValid = await Repo.find({
+          id: args.data.idOfRepo,
+          visibility: "public",
+        });
+        if (!repoValid) {
+          throw new Error("Repo is either private or doesnot exist");
+        }
+        const newComment: object = await Comment.create({
+          text: args.data.text,
+          developer: id,
+          repoId: args.data.idOfRepo,
+        });
 
-      return newComment;
-    } catch (e) {
-      throw new Error(e);
+        return newComment;
+      } catch (e) {
+        throw new Error(e);
+      }
+    } else {
+      throw new AuthError();
     }
   },
   deleteComment: async (
     parent,
     args: { commentId: string },
-    ctx,
+    ctx: Context,
     info
   ): Promise<object> => {
-    try {
-      const existingComment: object = await Comment.findByIdAndDelete(
-        args.commentId
-      );
-      if (!existingComment) {
-        throw new Error("Comment Not Found");
+    let id = getUserId(ctx);
+    if (id) {
+      try {
+        const existingComment: object = await Comment.findByIdAndDelete(
+          args.commentId
+        );
+        if (!existingComment) {
+          throw new Error("Comment Not Found");
+        }
+        return existingComment;
+      } catch (e) {
+        throw new Error(e);
       }
-      return existingComment;
-    } catch (e) {
-      throw new Error(e);
+    } else {
+      throw new AuthError();
     }
   },
   updateComment: async (
     parent,
     args: { commentId: string; data: { text: string } },
-    ctx,
+    ctx: Context,
     info
   ): Promise<object> => {
-    try {
-      let reqComment = await Comment.findByIdAndUpdate(args.commentId, {
-        ...args.data,
-      });
-      if (!reqComment) {
-        throw new Error("Comment not found or invalid update fields");
+    let id = getUserId(ctx);
+    if (id) {
+      try {
+        let reqComment = await Comment.findByIdAndUpdate(args.commentId, {
+          ...args.data,
+        });
+        if (!reqComment) {
+          throw new Error("Comment not found or invalid update fields");
+        }
+        return reqComment;
+      } catch (e) {
+        throw new Error(e);
       }
-      return reqComment;
-    } catch (e) {
-      throw new Error(e);
+    } else {
+      throw new AuthError();
     }
   },
 };
-
 export { Mutation as default };
