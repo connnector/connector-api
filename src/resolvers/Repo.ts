@@ -11,8 +11,13 @@ const Repo = {
       throw new Error(e);
     }
   },
-  comments: (parent, args, { db }, info): {} => {
-    return db.comments.filter((x) => x.repoId === parent.id);
+  comments: async (parent, args, ctx, info): Promise<object> => {
+    try {
+      const comments = await Comment.find({ repoId: parent._id });
+      return comments;
+    } catch (e) {
+      throw new Error(e);
+    }
   },
 };
 

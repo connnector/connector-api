@@ -1,36 +1,58 @@
+import Repo from "../model/Repo";
+import Comment from "../model/Comment";
+
 const User = {
-  repos: (
+  repos: async (
     parent: { id: string; name: string; email: string },
     args,
-    { db },
+    ctx,
     info
-  ): [{}] => {
+  ): Promise<object> => {
     if (args.visibility === "ALL") {
-      return db.repos.filter((x) => x.developer === parent.id);
+      try {
+        const repos = await Repo.find({ developer: args._id });
+        return repos;
+      } catch (e) {
+        throw new Error(e);
+      }
     }
-    return db.repos.filter(
-      (x) =>
-        x.developer === parent.id &&
-        x.visibility === args.visibility.toLowerCase()
-    );
+    try {
+      const repos = await Repo.find({
+        developer: args._id,
+        visibility: args.visibility.toLowerCase(),
+      });
+      return repos;
+    } catch (e) {
+      throw new Error(e);
+    }
   },
-  comments: (
+  comments: async (
     parent,
     args: { idOfRepo: string },
-    { db },
+    ctx,
     info
-  ): [{ object }] => {
-    const repoExists = db.repos.findIndex((x) => x.id === args.idOfRepo);
+  ): Promise<object> => {
+    try {
+      const repoExists: any = await Repo.findById(args.idOfRepo);
 
-    if (repoExists === -1) {
-      throw new Error("Repo does not exist");
+      if (!repoExists) {
+        throw new Error("Repo does not exist");
+      }
+      if (repoExists.visibility === "private") {
+        throw new Error("Repo is Private");
+      }
+    } catch (e) {
+      throw new Error(e);
     }
-    if (db.repos[repoExists].visibility === "private") {
-      throw new Error("Repo is Private");
+    try {
+      const comments: any = await Comment.find({
+        developer: parent.id,
+        repoId: args.idOfRepo,
+      });
+      return comments;
+    } catch (e) {
+      throw new Error(e);
     }
-    return db.comments.filter(
-      (x) => x.developer === parent.id && x.repoId === args.idOfRepo
-    );
   },
 };
 
