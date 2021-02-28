@@ -83,6 +83,9 @@ const Mutation = {
         }
     }),
     createRepo: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+        if (!ctx.authenticated) {
+            throw new Error("Not Authenticated");
+        }
         try {
             const userExists = yield User_1.default.findById(args.repoData.developer);
             if (!userExists) {

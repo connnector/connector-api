@@ -96,6 +96,10 @@ const Mutation = {
     ctx,
     info
   ): Promise<object> => {
+    console.log(ctx.userId);
+    if (!ctx.userId) {
+      throw new Error("Not Authenticated");
+    }
     try {
       const userExists = await User.findById(args.repoData.developer);
 

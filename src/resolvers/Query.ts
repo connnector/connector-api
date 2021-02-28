@@ -23,7 +23,7 @@ const Query = {
         throw new Error("Incorrect password");
       }
       const token = jwt.sign(
-        { name: existingUser.name, email: existingUser.email },
+        { id: existingUser._id, email: existingUser.email },
         "unexpectable bitch"
       );
 

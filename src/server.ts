@@ -18,7 +18,9 @@ const server = new GraphQLServer({
     Mutation,
     Comment,
   },
-  context: {},
+  context: (request) => ({
+    ...request,
+  }),
 });
 
 mongoose
