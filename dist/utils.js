@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = exports.AuthError = void 0;
+exports.AuthError = exports.getUserId = void 0;
 const jwt = __importStar(require("jsonwebtoken"));
 const getUserId = (ctx) => {
     const Authorization = ctx.request.get("Authorization");
@@ -30,7 +30,7 @@ const getUserId = (ctx) => {
     }
     throw new AuthError();
 };
-exports.default = getUserId;
+exports.getUserId = getUserId;
 class AuthError extends Error {
     constructor() {
         super("Not authorized");

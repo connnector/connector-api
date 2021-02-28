@@ -3,7 +3,7 @@ import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
 import jwt from "jsonwebtoken";
-import { Context, getUserId } from "../utils";
+import { Context, getUserId, AuthError } from "../utils";
 
 const Mutation = {
   signUp: async (
@@ -97,40 +97,43 @@ const Mutation = {
     ctx: Context,
     info
   ): Promise<object> => {
-    console.log(getUserId(ctx));
-    try {
-      const userExists = await User.findById(args.repoData.developer);
+    if (getUserId(ctx)) {
+      try {
+        const userExists = await User.findById(args.repoData.developer);
 
-      if (!userExists) {
-        throw new Error("No developer with this id");
+        if (!userExists) {
+          throw new Error("No developer with this id");
+        }
+      } catch (e) {
+        throw new Error(e);
       }
-    } catch (e) {
-      throw new Error(e);
-    }
-    let newRepo: object;
+      let newRepo: object;
 
-    try {
-      const titleTaken = await Repo.findOne({
-        title: args.repoData.title,
-        developer: args.repoData.developer,
-      });
+      try {
+        const titleTaken = await Repo.findOne({
+          title: args.repoData.title,
+          developer: args.repoData.developer,
+        });
 
-      if (titleTaken) {
-        throw new Error("title already taken");
+        if (titleTaken) {
+          throw new Error("title already taken");
+        }
+      } catch (e) {
+        throw new Error(e);
       }
-    } catch (e) {
-      throw new Error(e);
-    }
 
-    try {
-      newRepo = Repo.create({
-        ...args.repoData,
-      });
-    } catch (e) {
-      throw new Error(e);
-    }
+      try {
+        newRepo = Repo.create({
+          ...args.repoData,
+        });
+      } catch (e) {
+        throw new Error(e);
+      }
 
-    return newRepo;
+      return newRepo;
+    } else {
+      throw new AuthError();
+    }
   },
   deleteRepo: async (
     parent,

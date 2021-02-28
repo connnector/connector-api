@@ -18,6 +18,7 @@ const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const utils_1 = require("../utils");
 const Mutation = {
     signUp: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let existingUser;
@@ -83,39 +84,40 @@ const Mutation = {
         }
     }),
     createRepo: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(ctx.userId);
-        if (!ctx.userId) {
-            throw new Error("Not Authenticated");
-        }
-        try {
-            const userExists = yield User_1.default.findById(args.repoData.developer);
-            if (!userExists) {
-                throw new Error("No developer with this id");
+        if (utils_1.getUserId(ctx)) {
+            try {
+                const userExists = yield User_1.default.findById(args.repoData.developer);
+                if (!userExists) {
+                    throw new Error("No developer with this id");
+                }
             }
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-        let newRepo;
-        try {
-            const titleTaken = yield Repo_1.default.findOne({
-                title: args.repoData.title,
-                developer: args.repoData.developer,
-            });
-            if (titleTaken) {
-                throw new Error("title already taken");
+            catch (e) {
+                throw new Error(e);
             }
+            let newRepo;
+            try {
+                const titleTaken = yield Repo_1.default.findOne({
+                    title: args.repoData.title,
+                    developer: args.repoData.developer,
+                });
+                if (titleTaken) {
+                    throw new Error("title already taken");
+                }
+            }
+            catch (e) {
+                throw new Error(e);
+            }
+            try {
+                newRepo = Repo_1.default.create(Object.assign({}, args.repoData));
+            }
+            catch (e) {
+                throw new Error(e);
+            }
+            return newRepo;
         }
-        catch (e) {
-            throw new Error(e);
+        else {
+            throw new utils_1.AuthError();
         }
-        try {
-            newRepo = Repo_1.default.create(Object.assign({}, args.repoData));
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-        return newRepo;
     }),
     deleteRepo: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {

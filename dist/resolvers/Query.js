@@ -30,7 +30,7 @@ const Query = {
             if (!match) {
                 throw new Error("Incorrect password");
             }
-            const token = jsonwebtoken_1.default.sign({ userId: existingUser._id, email: existingUser.email }, process.env.SECRET);
+            const token = jsonwebtoken_1.default.sign({ userd: existingUser._id, email: existingUser.email }, process.env.SECRET);
             const returnData = {
                 user: existingUser,
                 token,
