@@ -38,7 +38,7 @@ const Mutation = {
             throw new Error();
         }
         let newUser;
-        const token = jsonwebtoken_1.default.sign({ name: args.userData.name, email: args.userData.email }, "unexpectable bitch");
+        const token = jsonwebtoken_1.default.sign({ name: args.userData.name, email: args.userData.email }, process.env.SECRET);
         try {
             newUser = yield User_1.default.create(Object.assign(Object.assign({}, args.userData), { password: hashedPassword }));
         }
@@ -83,7 +83,8 @@ const Mutation = {
         }
     }),
     createRepo: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        if (!ctx.authenticated) {
+        console.log(ctx.userId);
+        if (!ctx.userId) {
             throw new Error("Not Authenticated");
         }
         try {

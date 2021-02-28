@@ -4,7 +4,7 @@ export interface Context {
   request: any;
 }
 
-const getUserId = (ctx: Context) => {
+export const getUserId = (ctx: Context) => {
   const Authorization = ctx.request.get("Authorization");
   if (Authorization) {
     const token = Authorization.replace("Bearer ", "");
@@ -22,5 +22,3 @@ export class AuthError extends Error {
     super("Not authorized");
   }
 }
-
-export { getUserId as default };

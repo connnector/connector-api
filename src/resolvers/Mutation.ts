@@ -3,6 +3,7 @@ import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
 import jwt from "jsonwebtoken";
+import { Context, getUserId } from "../utils";
 
 const Mutation = {
   signUp: async (
@@ -31,7 +32,7 @@ const Mutation = {
 
     const token = jwt.sign(
       { name: args.userData.name, email: args.userData.email },
-      "unexpectable bitch"
+      process.env.SECRET
     );
     try {
       newUser = await User.create({
@@ -93,13 +94,10 @@ const Mutation = {
     args: {
       repoData: { title: string; visibility: string; developer: string };
     },
-    ctx,
+    ctx: Context,
     info
   ): Promise<object> => {
-    console.log(ctx.userId);
-    if (!ctx.userId) {
-      throw new Error("Not Authenticated");
-    }
+    console.log(getUserId(ctx));
     try {
       const userExists = await User.findById(args.repoData.developer);
 

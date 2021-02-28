@@ -4,12 +4,13 @@ import Comment from "../model/Comment";
 import { Document, Model, Mongoose } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { Context } from "../utils";
 
 const Query = {
   login: async (
     parent,
     args: { email: string; password: string },
-    ctx,
+    ctx: Context,
     info
   ): Promise<object> => {
     try {
@@ -23,8 +24,8 @@ const Query = {
         throw new Error("Incorrect password");
       }
       const token = jwt.sign(
-        { id: existingUser._id, email: existingUser.email },
-        "unexpectable bitch"
+        { userd: existingUser._id, email: existingUser.email },
+        process.env.SECRET
       );
 
       const returnData: object = {
