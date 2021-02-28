@@ -26,9 +26,10 @@ const getUserId = (ctx) => {
     if (Authorization) {
         const token = Authorization.replace("Bearer ", "");
         const { userId } = jwt.verify(token, process.env.SECRET);
+        console.log(userId);
         return userId;
     }
-    throw new AuthError();
+    return null;
 };
 exports.getUserId = getUserId;
 class AuthError extends Error {

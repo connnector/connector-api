@@ -36,13 +36,13 @@ const signUp = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, fu
         throw new Error();
     }
     let newUser;
-    const token = jsonwebtoken_1.default.sign({ name: args.userData.name, email: args.userData.email }, process.env.SECRET);
     try {
         newUser = yield User_1.default.create(Object.assign(Object.assign({}, args.userData), { password: hashedPassword }));
     }
     catch (e) {
         throw new Error(e);
     }
+    const token = jsonwebtoken_1.default.sign({ userId: newUser._id, email: newUser.email }, process.env.SECRET);
     const returnData = {
         user: newUser,
         token,

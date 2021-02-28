@@ -10,6 +10,7 @@ export const createRepo = async (
   info
 ): Promise<object> => {
   let id = getUserId(ctx);
+
   if (id) {
     let newRepo: object;
 
@@ -29,6 +30,7 @@ export const createRepo = async (
     try {
       newRepo = Repo.create({
         ...args.repoData,
+        developer: id,
       });
     } catch (e) {
       throw new Error(e);
