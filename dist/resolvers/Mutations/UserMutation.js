@@ -20,13 +20,15 @@ const utils_1 = require("../../utils");
 const signUp = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
     let existingUser;
     try {
-        existingUser = yield User_1.default.findOne({ email: args.userData.email });
+        existingUser =
+            (yield User_1.default.findOne({ email: args.userData.email })) ||
+                (yield User_1.default.findOne({ userName: args.userData.userName }));
     }
     catch (e) {
         throw new Error(e);
     }
     if (existingUser) {
-        throw new Error("user already exists");
+        throw new Error("Username or email already in use");
     }
     let hashedPassword;
     try {
@@ -42,7 +44,7 @@ const signUp = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, fu
     catch (e) {
         throw new Error(e);
     }
-    const token = jsonwebtoken_1.default.sign({ userId: newUser._id, email: newUser.email }, process.env.SECRET);
+    const token = jsonwebtoken_1.default.sign({ id: newUser._id, userName: newUser.userName }, process.env.SECRET);
     const returnData = {
         user: newUser,
         token,
@@ -52,7 +54,7 @@ const signUp = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, fu
 });
 exports.signUp = signUp;
 const deleteUser = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = utils_1.getUserId(ctx);
+    let { id } = utils_1.getUserId(ctx);
     if (id) {
         try {
             const existingUser = yield User_1.default.findByIdAndDelete(id);
@@ -71,7 +73,7 @@ const deleteUser = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0
 });
 exports.deleteUser = deleteUser;
 const updateUser = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = utils_1.getUserId(ctx);
+    let { id } = utils_1.getUserId(ctx);
     if (id) {
         try {
             if (args.updateData.email) {

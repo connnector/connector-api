@@ -17,7 +17,7 @@ const Repo_1 = __importDefault(require("../../model/Repo"));
 const Comment_1 = __importDefault(require("../../model/Comment"));
 const utils_1 = require("../../utils");
 const createComment = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = utils_1.getUserId(ctx);
+    let { id } = utils_1.getUserId(ctx);
     if (id) {
         try {
             const repoValid = yield Repo_1.default.find({

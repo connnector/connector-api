@@ -8,7 +8,7 @@ export const createComment = async (
   ctx: Context,
   info
 ): Promise<object> => {
-  let id = getUserId(ctx);
+  let { id } = getUserId(ctx);
   if (id) {
     try {
       const repoValid = await Repo.find({

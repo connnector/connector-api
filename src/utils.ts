@@ -8,11 +8,11 @@ export const getUserId = (ctx: Context) => {
   const Authorization = ctx.request.get("Authorization");
   if (Authorization) {
     const token = Authorization.replace("Bearer ", "");
-    const { userId } = jwt.verify(token, process.env.SECRET) as {
-      userId: string;
+    const { id, userName } = jwt.verify(token, process.env.SECRET) as {
+      id: string;
+      userName: string;
     };
-    console.log(userId);
-    return userId;
+    return { id, userName };
   }
 
   return null;

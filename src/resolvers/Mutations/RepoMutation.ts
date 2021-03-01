@@ -9,7 +9,7 @@ export const createRepo = async (
   ctx: Context,
   info
 ): Promise<object> => {
-  let id = getUserId(ctx);
+  let { id } = getUserId(ctx);
 
   if (id) {
     let newRepo: object;
@@ -47,7 +47,7 @@ export const deleteRepo = async (
   ctx: Context,
   info
 ): Promise<object> => {
-  let id = getUserId(ctx);
+  let { id } = getUserId(ctx);
   if (id) {
     try {
       const existingRepo: object = await Repo.findByIdAndDelete(args.repoId);
@@ -68,7 +68,7 @@ export const updateRepo = async (
   ctx: Context,
   info
 ): Promise<object> => {
-  let id = getUserId(ctx);
+  let { id } = getUserId(ctx);
   if (id) {
     try {
       let reqRepo = await Repo.findByIdAndUpdate(args.repoId, {

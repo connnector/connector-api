@@ -16,7 +16,7 @@ exports.updateRepo = exports.deleteRepo = exports.createRepo = void 0;
 const Repo_1 = __importDefault(require("../../model/Repo"));
 const utils_1 = require("../../utils");
 const createRepo = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = utils_1.getUserId(ctx);
+    let { id } = utils_1.getUserId(ctx);
     if (id) {
         let newRepo;
         try {
@@ -45,7 +45,7 @@ const createRepo = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0
 });
 exports.createRepo = createRepo;
 const deleteRepo = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = utils_1.getUserId(ctx);
+    let { id } = utils_1.getUserId(ctx);
     if (id) {
         try {
             const existingRepo = yield Repo_1.default.findByIdAndDelete(args.repoId);
@@ -64,7 +64,7 @@ const deleteRepo = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0
 });
 exports.deleteRepo = deleteRepo;
 const updateRepo = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = utils_1.getUserId(ctx);
+    let { id } = utils_1.getUserId(ctx);
     if (id) {
         try {
             let reqRepo = yield Repo_1.default.findByIdAndUpdate(args.repoId, Object.assign({}, args.updateData));

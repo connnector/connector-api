@@ -45,7 +45,7 @@ export const signUp = async (
     throw new Error(e);
   }
   const token = jwt.sign(
-    { userId: newUser._id, email: newUser.email },
+    { id: newUser._id, userName: newUser.userName },
     process.env.SECRET
   );
   const returnData: object = {
@@ -61,7 +61,7 @@ export const deleteUser = async (
   ctx: Context,
   info
 ): Promise<object> => {
-  let id = getUserId(ctx);
+  let { id } = getUserId(ctx);
   if (id) {
     try {
       const existingUser: object = await User.findByIdAndDelete(id);
@@ -82,7 +82,7 @@ export const updateUser = async (
   ctx: Context,
   info
 ): Promise<object> => {
-  let id = getUserId(ctx);
+  let { id } = getUserId(ctx);
   if (id) {
     try {
       if (args.updateData.email) {
