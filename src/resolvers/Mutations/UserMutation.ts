@@ -5,19 +5,28 @@ import { Context, getUserId, AuthError } from "../../utils";
 
 export const signUp = async (
   parent,
-  args: { userData: { name: string; email: string; password: string } },
+  args: {
+    userData: {
+      userName: string;
+      name: string;
+      email: string;
+      password: string;
+    };
+  },
   ctx,
   info
 ): Promise<object> => {
   let existingUser;
   try {
-    existingUser = await User.findOne({ email: args.userData.email });
+    existingUser =
+      (await User.findOne({ email: args.userData.email })) ||
+      (await User.findOne({ userName: args.userData.userName }));
   } catch (e) {
     throw new Error(e);
   }
 
   if (existingUser) {
-    throw new Error("user already exists");
+    throw new Error("Username or email already in use");
   }
   let hashedPassword: string;
   try {

@@ -1,4 +1,4 @@
-import { GraphQLServer } from "graphql-yoga";
+import { GraphQLServer, PubSub } from "graphql-yoga";
 import mongoose from "mongoose";
 import Query from "./resolvers/Query";
 import User from "./resolvers/User";
@@ -8,6 +8,8 @@ import Comment from "./resolvers/Comment";
 import Chalk from "chalk";
 
 const PORT: string = process.env.PORT;
+
+const pubsub = new PubSub();
 
 const server = new GraphQLServer({
   typeDefs: "./src/schema.graphql",
@@ -20,6 +22,7 @@ const server = new GraphQLServer({
   },
   context: (request) => ({
     ...request,
+    pubsub,
   }),
 });
 
