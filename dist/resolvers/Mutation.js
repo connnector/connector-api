@@ -15,7 +15,7 @@ const Mutation = {
     createComment: CommentMutation_1.createComment,
     updateComment: CommentMutation_1.updateComment,
     deleteComment: CommentMutation_1.deleteComment,
-    StartChatting: ChatMutation_1.StartChatting,
+    startChatting: ChatMutation_1.startChatting,
 };
 exports.default = Mutation;
 //# sourceMappingURL=Mutation.js.map

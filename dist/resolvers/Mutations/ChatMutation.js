@@ -12,34 +12,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StartChatting = void 0;
+exports.startChatting = void 0;
 const Chat_1 = __importDefault(require("../../model/Chat"));
+const User_1 = __importDefault(require("../../model/User"));
 const ChatData_1 = __importDefault(require("../../model/ChatData"));
 const utils_1 = require("../../utils");
 const mongoose_1 = require("mongoose");
-const StartChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
     const { userName } = utils_1.getUserId(ctx);
     if (!userName) {
         throw new utils_1.AuthError();
     }
-    let chat;
+    const recieverExist = yield User_1.default.findOne({ userName: args.data.user2 });
+    if (!recieverExist) {
+        throw new Error("reciever doesnot exist");
+    }
+    let chat = null;
     try {
         const sess = yield mongoose_1.startSession();
         sess.startTransaction();
-        chat =
-            (yield Chat_1.default.findOne({ user1: userName, user2: args.data.user2 })) ||
-                (yield Chat_1.default.findOne({ user1: args.data.user2, user2: userName }));
+        chat = yield Chat_1.default.findOne({
+            $or: [
+                { user1: userName, user2: args.data.user2 },
+                { user1: args.data.user2, user2: userName },
+            ],
+        });
         if (!chat) {
             chat = new Chat_1.default({
                 user1: userName,
-                user2: args.data.user,
+                user2: args.data.user2,
             });
             yield chat.save({ session: sess });
         }
         const newChatData = new ChatData_1.default({
             user: userName,
-            text: args.data.message,
-            parentChat: chat._id,
+            text: args.data.text,
+            parentChat: chat.id,
         });
         yield newChatData.save({ session: sess });
         yield sess.commitTransaction();
@@ -49,5 +57,5 @@ const StartChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, voi
     }
     return chat;
 });
-exports.StartChatting = StartChatting;
+exports.startChatting = startChatting;
 //# sourceMappingURL=ChatMutation.js.map

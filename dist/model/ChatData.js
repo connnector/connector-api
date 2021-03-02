@@ -11,6 +11,6 @@ const chatDataSchema = new Schema({
     text: { type: String, required: true },
     parentChat: { type: mongoose_1.default.Types.ObjectId, required: true, ref: "Chat" },
 });
-const ChatData = mongoose_1.default.model("Chat", chatDataSchema);
+const ChatData = mongoose_1.default.model("ChatData", chatDataSchema);
 exports.default = ChatData;
 //# sourceMappingURL=ChatData.js.map

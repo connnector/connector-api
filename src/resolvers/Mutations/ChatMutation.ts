@@ -1,4 +1,5 @@
 import Chat from "../../model/Chat";
+import User from "../../model/User";
 import ChatData from "../../model/ChatData";
 import { Context, getUserId, AuthError } from "../../utils";
 import { startSession } from "mongoose";
@@ -13,6 +14,10 @@ export const startChatting = async (
 
   if (!userName) {
     throw new AuthError();
+  }
+  const recieverExist = await User.findOne({ userName: args.data.user2 });
+  if (!recieverExist) {
+    throw new Error("reciever doesnot exist");
   }
   let chat: any = null;
   try {

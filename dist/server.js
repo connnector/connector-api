@@ -10,6 +10,7 @@ const User_1 = __importDefault(require("./resolvers/User"));
 const Repo_1 = __importDefault(require("./resolvers/Repo"));
 const Mutation_1 = __importDefault(require("./resolvers/Mutation"));
 const Comment_1 = __importDefault(require("./resolvers/Comment"));
+const Chat_1 = __importDefault(require("./resolvers/Chat"));
 const chalk_1 = __importDefault(require("chalk"));
 const PORT = process.env.PORT;
 const server = new graphql_yoga_1.GraphQLServer({
@@ -20,6 +21,7 @@ const server = new graphql_yoga_1.GraphQLServer({
         Repo: Repo_1.default,
         Mutation: Mutation_1.default,
         Comment: Comment_1.default,
+        Chat: Chat_1.default,
     },
     context: (request) => (Object.assign({}, request)),
 });
