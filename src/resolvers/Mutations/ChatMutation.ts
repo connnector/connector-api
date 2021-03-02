@@ -20,6 +20,7 @@ export const startChatting = async (
     throw new Error("reciever doesnot exist");
   }
   let chat: any = null;
+  let newChatData: any = null;
   try {
     const sess = await startSession();
     sess.startTransaction();
@@ -36,7 +37,7 @@ export const startChatting = async (
       });
       await chat.save({ session: sess });
     }
-    const newChatData = new ChatData({
+    newChatData = new ChatData({
       user: userName,
       text: args.data.text,
       parentChat: chat.id,
@@ -47,6 +48,10 @@ export const startChatting = async (
   } catch (e) {
     throw new Error(e);
   }
+
+  ctx.pubsub.publish(`chat ${newChatData.parentChat}`, {
+    liveChat: newChatData,
+  });
 
   return chat;
 };

@@ -19,6 +19,7 @@ const ChatData_1 = __importDefault(require("../../model/ChatData"));
 const utils_1 = require("../../utils");
 const mongoose_1 = require("mongoose");
 const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(ctx);
     const { userName } = utils_1.getUserId(ctx);
     if (!userName) {
         throw new utils_1.AuthError();

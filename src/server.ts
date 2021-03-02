@@ -4,11 +4,14 @@ import Query from "./resolvers/Query";
 import User from "./resolvers/User";
 import Repo from "./resolvers/Repo";
 import Mutation from "./resolvers/Mutation";
+import Subscription from "./resolvers/Subscriptions/Subscription";
 import Comment from "./resolvers/Comment";
 import Chat from "./resolvers/Chat";
 import Chalk from "chalk";
 
 const PORT: string = process.env.PORT;
+
+const pubsub = new PubSub();
 
 const server = new GraphQLServer({
   typeDefs: "./src/schema.graphql",
@@ -17,11 +20,13 @@ const server = new GraphQLServer({
     User,
     Repo,
     Mutation,
+    Subscription,
     Comment,
     Chat,
   },
   context: (request) => ({
     ...request,
+    pubsub,
   }),
 });
 

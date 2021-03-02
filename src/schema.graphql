@@ -20,6 +20,10 @@ type Mutation {
   startChatting(data: chat_input_data): Chat!
 }
 
+type Subscription {
+  liveChat(chatId: ID!): chat_data!
+}
+
 type User {
   id: ID!
   name: String!
@@ -61,6 +65,11 @@ type chat_data {
   id: ID!
   user: String!
   text: String!
+}
+
+input sub_data {
+  user1: String!
+  user2: String!
 }
 
 input chat_input_data {

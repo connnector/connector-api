@@ -9,10 +9,12 @@ const Query_1 = __importDefault(require("./resolvers/Query"));
 const User_1 = __importDefault(require("./resolvers/User"));
 const Repo_1 = __importDefault(require("./resolvers/Repo"));
 const Mutation_1 = __importDefault(require("./resolvers/Mutation"));
+const Subscription_1 = __importDefault(require("./resolvers/Subscriptions/Subscription"));
 const Comment_1 = __importDefault(require("./resolvers/Comment"));
 const Chat_1 = __importDefault(require("./resolvers/Chat"));
 const chalk_1 = __importDefault(require("chalk"));
 const PORT = process.env.PORT;
+const pubsub = new graphql_yoga_1.PubSub();
 const server = new graphql_yoga_1.GraphQLServer({
     typeDefs: "./src/schema.graphql",
     resolvers: {
@@ -20,10 +22,11 @@ const server = new graphql_yoga_1.GraphQLServer({
         User: User_1.default,
         Repo: Repo_1.default,
         Mutation: Mutation_1.default,
+        Subscription: Subscription_1.default,
         Comment: Comment_1.default,
         Chat: Chat_1.default,
     },
-    context: (request) => (Object.assign({}, request)),
+    context: (request) => (Object.assign(Object.assign({}, request), { pubsub })),
 });
 mongoose_1.default
     .connect("mongodb+srv://Johnny:iamjohnnyboy@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })

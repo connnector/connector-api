@@ -2,6 +2,7 @@ import * as jwt from "jsonwebtoken";
 
 export interface Context {
   request: any;
+  pubsub;
 }
 
 export const getUserId = (ctx: Context) => {
