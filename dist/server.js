@@ -12,7 +12,6 @@ const Mutation_1 = __importDefault(require("./resolvers/Mutation"));
 const Comment_1 = __importDefault(require("./resolvers/Comment"));
 const chalk_1 = __importDefault(require("chalk"));
 const PORT = process.env.PORT;
-const pubsub = new graphql_yoga_1.PubSub();
 const server = new graphql_yoga_1.GraphQLServer({
     typeDefs: "./src/schema.graphql",
     resolvers: {
@@ -22,7 +21,7 @@ const server = new graphql_yoga_1.GraphQLServer({
         Mutation: Mutation_1.default,
         Comment: Comment_1.default,
     },
-    context: (request) => (Object.assign(Object.assign({}, request), { pubsub })),
+    context: (request) => (Object.assign({}, request)),
 });
 mongoose_1.default
     .connect("mongodb+srv://Johnny:iamjohnnyboy@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })

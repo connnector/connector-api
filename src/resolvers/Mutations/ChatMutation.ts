@@ -40,12 +40,5 @@ export const StartChatting = async (
     throw new Error(e);
   }
 
-  let allChat: any;
-
-  try {
-    allChat = await ChatData.find({ parentChat: chat._id });
-    return allChat;
-  } catch (e) {
-    throw new Error(e);
-  }
+  return chat;
 };

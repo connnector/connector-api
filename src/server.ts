@@ -5,11 +5,10 @@ import User from "./resolvers/User";
 import Repo from "./resolvers/Repo";
 import Mutation from "./resolvers/Mutation";
 import Comment from "./resolvers/Comment";
+import Chat from "./resolvers/Chat";
 import Chalk from "chalk";
 
 const PORT: string = process.env.PORT;
-
-const pubsub = new PubSub();
 
 const server = new GraphQLServer({
   typeDefs: "./src/schema.graphql",
@@ -22,7 +21,6 @@ const server = new GraphQLServer({
   },
   context: (request) => ({
     ...request,
-    pubsub,
   }),
 });
 

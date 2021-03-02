@@ -17,6 +17,7 @@ type Mutation {
   createComment(data: create_comment_data!): Comment!
   deleteComment(commentId: ID!): Comment!
   updateComment(commentId: ID!, data: update_comment_data): Comment!
+  startChatting(data:chat_input_data):Chat!
 }
 
 type User {
@@ -28,16 +29,6 @@ type User {
   comments(idOfRepo: ID!): [Comment]!
 }
 
-input input_login_data {
-  email: String!
-  password: String!
-}
-
-type AuthData {
-  id: ID!
-  token: String!
-  expirationTime: Int!
-}
 
 type Repo {
   id: ID!
@@ -53,6 +44,35 @@ type Comment {
   repo: Repo!
   developer: User!
 }
+
+type Chat {
+  id:ID!
+  user1:String!
+  user2:String!
+  chats:[chat_data]
+}
+
+
+type AuthData {
+  id: ID!
+  token: String!
+  expirationTime: Int!
+}
+
+type chat_data {
+  text:String!
+}
+
+input chat_input_data{
+  user2:String!,
+  message:chat_data!
+}
+
+input input_login_data {
+  email: String!
+  password: String!
+}
+
 
 input signup_data {
   name: String!
