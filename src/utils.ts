@@ -12,6 +12,7 @@ export const getUserId = (ctx: Context) => {
       id: string;
       userName: string;
     };
+
     return { id, userName };
   }
 

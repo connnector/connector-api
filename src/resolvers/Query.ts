@@ -24,7 +24,7 @@ const Query = {
         throw new Error("Incorrect password");
       }
       const token = jwt.sign(
-        { userd: existingUser._id, email: existingUser.email },
+        { id: existingUser._id, userName: existingUser.userName },
         process.env.SECRET
       );
 
