@@ -3,7 +3,7 @@ import ChatData from "../../model/ChatData";
 import { Context, getUserId, AuthError } from "../../utils";
 import { startSession } from "mongoose";
 
-export const StartChatting = async (
+export const startChatting = async (
   parent,
   args: any,
   ctx: Context,
@@ -14,24 +14,27 @@ export const StartChatting = async (
   if (!userName) {
     throw new AuthError();
   }
-  let chat: any;
+  let chat: any = null;
   try {
     const sess = await startSession();
     sess.startTransaction();
-    chat =
-      (await Chat.findOne({ user1: userName, user2: args.data.user2 })) ||
-      (await Chat.findOne({ user1: args.data.user2, user2: userName }));
+    chat = await Chat.findOne({
+      $or: [
+        { user1: userName, user2: args.data.user2 },
+        { user1: args.data.user2, user2: userName },
+      ],
+    });
     if (!chat) {
       chat = new Chat({
         user1: userName,
-        user2: args.data.user,
+        user2: args.data.user2,
       });
       await chat.save({ session: sess });
     }
     const newChatData = new ChatData({
       user: userName,
-      text: args.data.message,
-      parentChat: chat._id,
+      text: args.data.text,
+      parentChat: chat.id,
     });
 
     await newChatData.save({ session: sess });

@@ -18,6 +18,7 @@ const server = new GraphQLServer({
     Repo,
     Mutation,
     Comment,
+    Chat,
   },
   context: (request) => ({
     ...request,

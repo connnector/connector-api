@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 const ChatData_1 = __importDefault(require("../model/ChatData"));
 const Chat = {
-    chat: (parent, ars, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+    chats: (parent, ars, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let allChat;
         try {
             allChat = yield ChatData_1.default.find({ parentChat: parent._id });

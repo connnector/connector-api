@@ -8,6 +8,6 @@ const chatDataSchema = new Schema({
   parentChat: { type: mongoose.Types.ObjectId, required: true, ref: "Chat" },
 });
 
-const ChatData = mongoose.model("Chat", chatDataSchema);
+const ChatData = mongoose.model("ChatData", chatDataSchema);
 
 export { ChatData as default };
