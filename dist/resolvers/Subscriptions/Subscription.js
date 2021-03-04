@@ -15,13 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 const Chat_1 = __importDefault(require("../../model/Chat"));
 const Subscription = {
-    realTimeChat: {
-        subscribe: (parent, args, { pubsub }, info) => __awaiter(void 0, void 0, void 0, function* () {
+    liveChat: {
+        subscribe: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+            //         const { userName } = getUserId(ctx);
+            //   if (!userName) {
+            //     throw new AuthError();
+            //   }
             const chat = yield Chat_1.default.findById(args.chatId);
             if (!chat) {
                 throw new Error("Invalid chat id");
             }
-            return pubsub.asyncIterator(`chat ${args.chatId}`);
+            return ctx.pubsub.asyncIterator(`chat ${args.chatId}`);
         }),
     },
 };

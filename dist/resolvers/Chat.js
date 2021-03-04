@@ -17,7 +17,6 @@ const ChatData_1 = __importDefault(require("../model/ChatData"));
 const Chat = {
     chats: (parent, ars, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let allChat;
-        console.log(parent);
         try {
             allChat = yield ChatData_1.default.find({ parentChat: parent.id });
             return allChat;

@@ -19,7 +19,6 @@ const ChatData_1 = __importDefault(require("../../model/ChatData"));
 const utils_1 = require("../../utils");
 const mongoose_1 = require("mongoose");
 const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(ctx);
     const { userName } = utils_1.getUserId(ctx);
     if (!userName) {
         throw new utils_1.AuthError();
@@ -29,6 +28,7 @@ const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, voi
         throw new Error("reciever doesnot exist");
     }
     let chat = null;
+    let newChatData = null;
     try {
         const sess = yield mongoose_1.startSession();
         sess.startTransaction();
@@ -45,7 +45,7 @@ const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, voi
             });
             yield chat.save({ session: sess });
         }
-        const newChatData = new ChatData_1.default({
+        newChatData = new ChatData_1.default({
             user: userName,
             text: args.data.text,
             parentChat: chat.id,
@@ -56,6 +56,9 @@ const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, voi
     catch (e) {
         throw new Error(e);
     }
+    ctx.pubsub.publish(`chat ${newChatData.parentChat}`, {
+        liveChat: newChatData,
+    });
     return chat;
 });
 exports.startChatting = startChatting;
