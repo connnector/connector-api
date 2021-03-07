@@ -18,6 +18,8 @@ type Mutation {
   deleteComment(commentId: ID!): Comment!
   updateComment(commentId: ID!, data: update_comment_data): Comment!
   startChatting(data: chat_input_data): Chat!
+  like(repoId: Id!): [User]!
+  unLike(repoId: Id!): [User]!
 }
 
 type Subscription {
@@ -46,6 +48,12 @@ type Comment {
   id: ID!
   text: String!
   repo: Repo!
+  developer: User!
+}
+
+type Like {
+  id: Id!
+  repo: Id!
   developer: User!
 }
 
