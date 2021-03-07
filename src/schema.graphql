@@ -36,6 +36,7 @@ type User {
 type Repo {
   id: ID!
   title: String!
+  description: String!
   visibility: String!
   developer: User!
   comments: [Comment]!
@@ -91,6 +92,7 @@ input signup_data {
 input create_repo_data {
   title: String!
   visibility: String!
+  desc: String!
 }
 
 input update_user_data {
@@ -101,6 +103,7 @@ input update_user_data {
 input update_repo_data {
   title: String
   visibility: String
+  desc: String
 }
 
 input create_comment_data {
