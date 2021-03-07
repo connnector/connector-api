@@ -6,6 +6,7 @@ import {
   deleteComment,
 } from "./Mutations/CommentMutation";
 import { startChatting } from "./Mutations/ChatMutation";
+import { like } from "./Mutations/LikeMutation";
 
 const Mutation = {
   signUp,
@@ -18,6 +19,7 @@ const Mutation = {
   updateComment,
   deleteComment,
   startChatting,
+  like,
 };
 
 export { Mutation as default };

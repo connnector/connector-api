@@ -4,38 +4,40 @@ import { Context, getUserId, AuthError } from "../../utils";
 
 export const like = async (
   parent,
-  args: { data: { repoId: string } },
+  args: { repoId: string },
   ctx: Context,
   info
-): Promise<number> => {
+): Promise<object> => {
   let { id } = getUserId(ctx);
   if (id) {
     try {
-      const repoValid: any = await Repo.find({
-        id: args.data.repoId,
+      const repoValid: any = await Repo.findOne({
+        _id: args.repoId,
         visibility: "public",
       });
       if (!repoValid) {
         throw new Error("Repo is either private or doesnot exist");
       }
 
-      const alreadyLiked = Like.findOne({
-        repo: args.data.repoId,
+      const alreadyLiked = await Like.findOne({
+        repo: args.repoId,
         developer: id,
       });
+      console.log(alreadyLiked);
       if (alreadyLiked) {
-        (await alreadyLiked).delete;
-        repoValid.likes = repoValid.likes + 1;
+        console.log("h");
+        await alreadyLiked.delete();
+        repoValid.likes = repoValid.likes - 1;
       } else {
         const newLike = new Like({
-          repo: args.data.repoId,
+          repo: args.repoId,
           developer: id,
         });
 
         await newLike.save();
         repoValid.likes = repoValid.likes + 1;
       }
-      return repoValid.likes;
+      return { number: repoValid.likes };
     } catch (e) {
       throw new Error(e);
     }

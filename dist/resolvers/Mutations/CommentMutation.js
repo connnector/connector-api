@@ -31,6 +31,8 @@ const createComment = (parent, args, ctx, info) => __awaiter(void 0, void 0, voi
                 text: args.data.text,
                 developer: id,
                 repoId: args.data.idOfRepo,
+                likes: 0,
+                comments: 0,
             });
             return newComment;
         }

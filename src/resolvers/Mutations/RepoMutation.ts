@@ -32,6 +32,8 @@ export const createRepo = async (
         ...args.repoData,
         developer: id,
         desc: args.repoData.desc,
+        totalComments: 0,
+        likes: 0,
       });
     } catch (e) {
       throw new Error(e);
