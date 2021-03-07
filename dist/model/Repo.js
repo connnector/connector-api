@@ -9,6 +9,7 @@ const Schema = mongoose_1.default.Schema;
 const repoSchema = new Schema({
     title: { type: String, required: true },
     visibility: { type: String, required: true },
+    desc: { type: String, required: true },
     developer: { type: mongoose_1.default.Types.ObjectId, required: true, ref: "User" },
 });
 const Repo = mongoose_1.default.model("Repo", repoSchema);
