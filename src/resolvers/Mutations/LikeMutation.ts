@@ -11,7 +11,7 @@ export const like = async (
   let { id } = getUserId(ctx);
   if (id) {
     try {
-      const repoValid = await Repo.find({
+      const repoValid: any = await Repo.find({
         id: args.data.repoId,
         visibility: "public",
       });
@@ -25,6 +25,7 @@ export const like = async (
       });
       if (alreadyLiked) {
         (await alreadyLiked).delete;
+        repoValid.likes = repoValid.likes + 1;
       } else {
         const newLike = new Like({
           repo: args.data.repoId,
@@ -32,9 +33,12 @@ export const like = async (
         });
 
         await newLike.save();
+        repoValid.likes = repoValid.likes + 1;
       }
-    } catch {}
-    return 1;
+      return repoValid.likes;
+    } catch (e) {
+      throw new Error(e);
+    }
   } else {
     throw new AuthError();
   }
