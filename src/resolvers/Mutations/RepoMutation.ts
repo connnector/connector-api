@@ -65,7 +65,10 @@ export const deleteRepo = async (
 };
 export const updateRepo = async (
   parent,
-  args: { repoId: string; updateData: { title: string; visibility: string } },
+  args: {
+    repoId: string;
+    updateData: { title: string; visibility: string; desc: string };
+  },
   ctx: Context,
   info
 ): Promise<object> => {
