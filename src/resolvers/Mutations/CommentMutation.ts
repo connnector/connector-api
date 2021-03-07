@@ -22,6 +22,8 @@ export const createComment = async (
         text: args.data.text,
         developer: id,
         repoId: args.data.idOfRepo,
+        likes: 0,
+        comments: 0,
       });
 
       return newComment;
