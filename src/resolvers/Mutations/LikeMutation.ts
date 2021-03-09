@@ -25,9 +25,9 @@ export const like = async (
       });
       console.log(alreadyLiked);
       if (alreadyLiked) {
-        console.log("h");
         await alreadyLiked.delete();
         repoValid.likes = repoValid.likes - 1;
+        await repoValid.save();
       } else {
         const newLike = new Like({
           repo: args.repoId,
@@ -36,6 +36,7 @@ export const like = async (
 
         await newLike.save();
         repoValid.likes = repoValid.likes + 1;
+        await repoValid.save();
       }
       return { number: repoValid.likes };
     } catch (e) {

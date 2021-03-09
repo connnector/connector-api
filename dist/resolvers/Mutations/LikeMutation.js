@@ -20,30 +20,31 @@ const like = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, func
     let { id } = utils_1.getUserId(ctx);
     if (id) {
         try {
-            const repoValid = yield Repo_1.default.find({
-                id: args.data.repoId,
+            const repoValid = yield Repo_1.default.findOne({
+                _id: args.repoId,
                 visibility: "public",
             });
             if (!repoValid) {
                 throw new Error("Repo is either private or doesnot exist");
             }
-            const alreadyLiked = Like_1.default.findOne({
-                repo: args.data.repoId,
+            const alreadyLiked = yield Like_1.default.findOne({
+                repo: args.repoId,
                 developer: id,
             });
+            console.log(alreadyLiked);
             if (alreadyLiked) {
-                (yield alreadyLiked).delete;
-                repoValid.likes = repoValid.likes + 1;
+                yield alreadyLiked.delete();
+                repoValid.likes = repoValid.likes - 1;
             }
             else {
                 const newLike = new Like_1.default({
-                    repo: args.data.repoId,
+                    repo: args.repoId,
                     developer: id,
                 });
                 yield newLike.save();
                 repoValid.likes = repoValid.likes + 1;
             }
-            return repoValid.likes;
+            return { number: repoValid.likes };
         }
         catch (e) {
             throw new Error(e);

@@ -32,7 +32,7 @@ const createRepo = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0
             throw new Error(e);
         }
         try {
-            newRepo = Repo_1.default.create(Object.assign(Object.assign({}, args.repoData), { developer: id, desc: args.repoData.desc }));
+            newRepo = Repo_1.default.create(Object.assign(Object.assign({}, args.repoData), { developer: id, desc: args.repoData.desc, totalComments: 0, likes: 0 }));
         }
         catch (e) {
             throw new Error(e);
