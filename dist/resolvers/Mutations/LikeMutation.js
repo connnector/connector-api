@@ -35,6 +35,7 @@ const like = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, func
             if (alreadyLiked) {
                 yield alreadyLiked.delete();
                 repoValid.likes = repoValid.likes - 1;
+                yield repoValid.save();
             }
             else {
                 const newLike = new Like_1.default({
@@ -43,6 +44,7 @@ const like = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, func
                 });
                 yield newLike.save();
                 repoValid.likes = repoValid.likes + 1;
+                yield repoValid.save();
             }
             return { number: repoValid.likes };
         }

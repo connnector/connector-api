@@ -46,6 +46,7 @@ type Repo {
   comments: [Comment]!
   totalComments: Int!
   likes: Int!
+  createdAt: String!
 }
 
 type Comment {
