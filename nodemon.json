@@ -1,6 +1,8 @@
 {
   "env": {
     "PORT": "5000",
-    "SECRET": "Unexpectable Bitch"
+    "SECRET": "Unexpectable Bitch",
+    "USER_NAME": "Johnny",
+    "PASSWORD": "iamjohnnyboy"
   }
 }

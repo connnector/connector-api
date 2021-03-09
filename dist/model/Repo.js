@@ -13,6 +13,8 @@ const repoSchema = new Schema({
     developer: { type: mongoose_1.default.Types.ObjectId, required: true, ref: "User" },
     likes: { type: Number, required: true },
     totalComments: { type: Number, required: true },
+}, {
+    timestamps: true,
 });
 const Repo = mongoose_1.default.model("Repo", repoSchema);
 exports.default = Repo;

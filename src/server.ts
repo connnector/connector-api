@@ -29,10 +29,11 @@ const server = new GraphQLServer({
     pubsub,
   }),
 });
+console.log(process.env.USER_NAME);
 
 mongoose
   .connect(
-    "mongodb+srv://Johnny:iamjohnnyboy@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority",
+    `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
   )
   .then(() => {
