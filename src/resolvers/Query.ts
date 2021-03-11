@@ -1,10 +1,13 @@
 import User from "../model/User";
 import Repo from "../model/Repo";
 import Comment from "../model/Comment";
+import Like from "../model/Like";
 import { Document, Model, Mongoose } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Context } from "../utils";
+import { getUserId, AuthError } from "../utils";
+import { like } from "./Mutations/LikeMutation";
 
 const Query = {
   login: async (
@@ -18,7 +21,6 @@ const Query = {
       if (!existingUser) {
         throw new Error("User doesNot exist");
       }
-      console.log(existingUser.password);
       const match = await bcrypt.compare(args.password, existingUser.password);
       if (!match) {
         throw new Error("Incorrect password");
@@ -77,18 +79,45 @@ const Query = {
     ctx,
     info
   ): Promise<Document<any>[]> => {
-    let allRepos: Document<any>[];
-    try {
-      allRepos = await Repo.find({ visibility: "public" }, null, {
-        skip: args.skip,
-        limit: args.limit,
-      });
-      if (allRepos.length === 0) {
-        throw new Error("No More Posts,Follow others to see more posts");
+    let { id } = getUserId(ctx);
+    if (id) {
+      let allRepos: any;
+      try {
+        allRepos = await Repo.find({ visibility: "public" }, null, {
+          skip: args.skip,
+          limit: args.limit,
+        });
+        if (allRepos.length === 0) {
+          throw new Error("No More Posts,Follow others to see more posts");
+        }
+
+        for (let i = 0; i < allRepos.length; i++) {
+          let likeExist: any = await Like.findOne({
+            developer: id,
+            repo: allRepos[i]._id,
+          });
+          if (likeExist) {
+            allRepos[i] = {
+              ...allRepos[i]._doc,
+              id: allRepos[i]._doc._id,
+              liked: true,
+            };
+          } else {
+            allRepos[i] = {
+              ...allRepos[i]._doc,
+              id: allRepos[i]._doc._id,
+              liked: false,
+            };
+          }
+          console.log(allRepos[i]);
+        }
+
+        return allRepos;
+      } catch (e) {
+        throw new Error(e);
       }
-      return allRepos;
-    } catch (e) {
-      throw new Error(e);
+    } else {
+      throw new AuthError();
     }
   },
   repoById: async (
