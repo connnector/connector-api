@@ -70,7 +70,10 @@ const Query = {
     repos: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let allRepos;
         try {
-            allRepos = yield Repo_1.default.find({ visibility: "public" });
+            allRepos = yield Repo_1.default.find({ visibility: "public" }, null, {
+                skip: args.skip,
+                limit: args.limit,
+            });
             if (allRepos.length === 0) {
                 throw new Error("No Repos");
             }
