@@ -84,7 +84,7 @@ const Query = {
         limit: args.limit,
       });
       if (allRepos.length === 0) {
-        throw new Error("No Repos");
+        throw new Error("No More Posts,Follow others to see more posts");
       }
       return allRepos;
     } catch (e) {
