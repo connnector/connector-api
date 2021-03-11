@@ -73,13 +73,16 @@ const Query = {
   },
   repos: async (
     parent,
-    args: { nameQuery: string },
+    args: { nameQuery: string; skip: number; limit: number },
     ctx,
     info
   ): Promise<Document<any>[]> => {
     let allRepos: Document<any>[];
     try {
-      allRepos = await Repo.find({ visibility: "public" });
+      allRepos = await Repo.find({ visibility: "public" }, null, {
+        skip: args.skip,
+        limit: args.limit,
+      });
       if (allRepos.length === 0) {
         throw new Error("No Repos");
       }

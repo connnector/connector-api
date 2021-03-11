@@ -1,6 +1,6 @@
 type Query {
   users(nameQuery: String): [User!]!
-  repos(nameQuery: String): [Repo!]!
+  repos(nameQuery: String, skip: Int!, limit: Int!): [Repo!]!
   comments(idOfRepo: ID!): [Comment!]!
   userById(idQuery: ID!): User!
   repoById(idQuery: ID!): Repo!
