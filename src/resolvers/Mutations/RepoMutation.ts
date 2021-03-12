@@ -4,7 +4,12 @@ import { Context, getUserId, AuthError } from "../../utils";
 export const createRepo = async (
   parent,
   args: {
-    repoData: { title: string; visibility: string; desc: string };
+    repoData: {
+      title: string;
+      visibility: string;
+      desc: string;
+      image: String;
+    };
   },
   ctx: Context,
   info
@@ -31,7 +36,6 @@ export const createRepo = async (
       newRepo = Repo.create({
         ...args.repoData,
         developer: id,
-        desc: args.repoData.desc,
         totalComments: 0,
         likes: 0,
       });

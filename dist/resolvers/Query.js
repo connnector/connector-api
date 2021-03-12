@@ -16,8 +16,10 @@ exports.default = void 0;
 const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
 const Comment_1 = __importDefault(require("../model/Comment"));
+const Like_1 = __importDefault(require("../model/Like"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const utils_1 = require("../utils");
 const Query = {
     login: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -25,7 +27,6 @@ const Query = {
             if (!existingUser) {
                 throw new Error("User doesNot exist");
             }
-            console.log(existingUser.password);
             const match = yield bcryptjs_1.default.compare(args.password, existingUser.password);
             if (!match) {
                 throw new Error("Incorrect password");
@@ -68,19 +69,38 @@ const Query = {
         }
     }),
     repos: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        let allRepos;
-        try {
-            allRepos = yield Repo_1.default.find({ visibility: "public" }, null, {
-                skip: args.skip,
-                limit: args.limit,
-            });
-            if (allRepos.length === 0) {
-                throw new Error("No Repos");
+        let { id } = utils_1.getUserId(ctx);
+        if (id) {
+            let allRepos;
+            try {
+                allRepos = yield Repo_1.default.find({ visibility: "public" }, null, {
+                    skip: args.skip,
+                    limit: args.limit,
+                });
+                if (allRepos.length === 0) {
+                    throw new Error("No More Posts,Follow others to see more posts");
+                }
+                for (let i = 0; i < allRepos.length; i++) {
+                    let likeExist = yield Like_1.default.findOne({
+                        developer: id,
+                        repo: allRepos[i]._id,
+                    });
+                    if (likeExist) {
+                        allRepos[i] = Object.assign(Object.assign({}, allRepos[i]._doc), { id: allRepos[i]._doc._id, liked: true });
+                    }
+                    else {
+                        allRepos[i] = Object.assign(Object.assign({}, allRepos[i]._doc), { id: allRepos[i]._doc._id, liked: false });
+                    }
+                    console.log(allRepos[i]);
+                }
+                return allRepos;
             }
-            return allRepos;
+            catch (e) {
+                throw new Error(e);
+            }
         }
-        catch (e) {
-            throw new Error(e);
+        else {
+            throw new utils_1.AuthError();
         }
     }),
     repoById: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {

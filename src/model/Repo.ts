@@ -8,6 +8,7 @@ const repoSchema = new Schema(
     visibility: { type: String, required: true },
     desc: { type: String, required: true },
     developer: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
+    image: { type: String, required: true },
     likes: { type: Number, required: true },
     totalComments: { type: Number, required: true },
   },
