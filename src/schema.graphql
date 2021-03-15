@@ -18,7 +18,7 @@ type Mutation {
   deleteComment(commentId: ID!): Comment!
   updateComment(commentId: ID!, data: update_comment_data): Comment!
   startChatting(data: chat_input_data): Chat!
-  like(repoId: ID!): likes_count
+  like(repoId: String!): likes_count
 }
 
 type likes_count {

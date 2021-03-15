@@ -91,7 +91,6 @@ const Query = {
                     else {
                         allRepos[i] = Object.assign(Object.assign({}, allRepos[i]._doc), { id: allRepos[i]._doc._id, liked: false });
                     }
-                    console.log(allRepos[i]);
                 }
                 return allRepos;
             }
