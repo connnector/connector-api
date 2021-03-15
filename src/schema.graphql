@@ -108,6 +108,7 @@ input create_repo_data {
   title: String!
   visibility: String!
   desc: String!
+  image: String!
 }
 
 input update_user_data {

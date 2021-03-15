@@ -109,7 +109,6 @@ const Query = {
               liked: false,
             };
           }
-          console.log(allRepos[i]);
         }
 
         return allRepos;
