@@ -23,7 +23,6 @@ export const like = async (
         repo: args.repoId,
         developer: id,
       });
-      console.log(alreadyLiked);
       if (alreadyLiked) {
         await alreadyLiked.delete();
         repoValid.likes = repoValid.likes - 1;
