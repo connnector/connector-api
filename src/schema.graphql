@@ -4,11 +4,11 @@ type Query {
   comments(idOfRepo: ID!): [Comment!]!
   userById(idQuery: ID!): User!
   repoById(idQuery: ID!): Repo!
-  login(email: String!, password: String!): auth_data!
 }
 
 type Mutation {
   signUp(userData: signup_data!): auth_data!
+  login(email: String!, password: String!): auth_data!
   deleteUser: User!
   updateUser(updateData: update_user_data!): User!
   createRepo(repoData: create_repo_data!): Repo!

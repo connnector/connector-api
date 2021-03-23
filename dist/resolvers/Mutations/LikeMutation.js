@@ -31,7 +31,6 @@ const like = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, func
                 repo: args.repoId,
                 developer: id,
             });
-            console.log(alreadyLiked);
             if (alreadyLiked) {
                 yield alreadyLiked.delete();
                 repoValid.likes = repoValid.likes - 1;
