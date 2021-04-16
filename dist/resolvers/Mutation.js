@@ -8,6 +8,7 @@ const ChatMutation_1 = require("./Mutations/ChatMutation");
 const LikeMutation_1 = require("./Mutations/LikeMutation");
 const Mutation = {
     signUp: UserMutation_1.signUp,
+    login: UserMutation_1.login,
     deleteUser: UserMutation_1.deleteUser,
     updateUser: UserMutation_1.updateUser,
     createRepo: RepoMutation_1.createRepo,

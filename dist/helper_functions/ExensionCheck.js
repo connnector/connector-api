@@ -8,23 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = void 0;
-const ChatData_1 = __importDefault(require("../model/ChatData"));
-const Chat = {
-    chats: (parent, ars, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        let allChat;
-        try {
-            allChat = yield ChatData_1.default.find({ parentChat: parent.id });
-            return allChat;
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-    }),
-};
-exports.default = Chat;
-//# sourceMappingURL=Chat.js.map
+exports.extensionCheck = void 0;
+const extensionCheck = (filename) => __awaiter(void 0, void 0, void 0, function* () {
+    let extension = filename.split(".")[1];
+    if (extension === "jpg" || extension === "jpeg" || extension === "png") {
+        return true;
+    }
+    throw new Error("Image Extention Error");
+});
+exports.extensionCheck = extensionCheck;
+//# sourceMappingURL=ExensionCheck.js.map

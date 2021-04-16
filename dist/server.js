@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
 const graphql_yoga_1 = require("graphql-yoga");
 const mongoose_1 = __importDefault(require("mongoose"));
 const Query_1 = __importDefault(require("./resolvers/Query"));
@@ -13,6 +14,8 @@ const Subscription_1 = __importDefault(require("./resolvers/Subscriptions/Subscr
 const Comment_1 = __importDefault(require("./resolvers/Comment"));
 const Chat_1 = __importDefault(require("./resolvers/Chat"));
 const chalk_1 = __importDefault(require("chalk"));
+const path_1 = __importDefault(require("path"));
+dotenv_1.default.config();
 const PORT = process.env.PORT;
 const pubsub = new graphql_yoga_1.PubSub();
 const server = new graphql_yoga_1.GraphQLServer({
@@ -28,11 +31,20 @@ const server = new graphql_yoga_1.GraphQLServer({
     },
     context: (request) => (Object.assign(Object.assign({}, request), { pubsub })),
 });
-console.log(process.env.USER_NAME);
+server.express.get("/uploads/*", (req, res, next) => {
+    const pathDir = path_1.default.join(__dirname, `/uploads`);
+    res.sendFile(pathDir);
+    next();
+});
+console.log(process.env.URL);
 mongoose_1.default
-    .connect(`mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+    .connect(process.env.URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+})
     .then(() => {
-    server.start({ port: PORT }, () => {
+    server.start(({ port: PORT }) => {
         console.log(chalk_1.default.hex("#fab95b").bold(`The Server is Up ${PORT}`));
     });
 })

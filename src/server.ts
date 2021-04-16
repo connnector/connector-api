@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import { GraphQLServer, PubSub } from "graphql-yoga";
 import mongoose from "mongoose";
 import Query from "./resolvers/Query";
@@ -8,6 +9,9 @@ import Subscription from "./resolvers/Subscriptions/Subscription";
 import Comment from "./resolvers/Comment";
 import Chat from "./resolvers/Chat";
 import Chalk from "chalk";
+import path from "path";
+
+dotenv.config();
 
 const PORT: string = process.env.PORT;
 
@@ -29,15 +33,22 @@ const server = new GraphQLServer({
     pubsub,
   }),
 });
-console.log(process.env.USER_NAME);
 
+server.express.get("/uploads/*", (req, res, next) => {
+  const pathDir = path.join(__dirname, `/uploads`);
+
+  res.sendFile(pathDir);
+  next();
+});
+console.log(process.env.URL);
 mongoose
-  .connect(
-    `mongodb+srv://${process.env.USER_NAME}:${process.env.PASSWORD}@cluster0.wepi9.mongodb.net/base?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }
-  )
+  .connect(process.env.URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
   .then(() => {
-    server.start({ port: PORT }, () => {
+    server.start(({ port: PORT }) => {
       console.log(Chalk.hex("#fab95b").bold(`The Server is Up ${PORT}`));
     });
   })

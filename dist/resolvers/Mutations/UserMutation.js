@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.deleteUser = exports.signUp = void 0;
+exports.updateUser = exports.deleteUser = exports.login = exports.signUp = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const User_1 = __importDefault(require("../../model/User"));
+const UploadImage_1 = require("../../helper_functions/UploadImage");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const utils_1 = require("../../utils");
 const signUp = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,6 +30,9 @@ const signUp = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, fu
     }
     if (existingUser) {
         throw new Error("Username or email already in use");
+    }
+    if (args.file) {
+        let hashedFile = UploadImage_1.uploadImage(args.file);
     }
     let hashedPassword;
     try {
@@ -53,6 +57,29 @@ const signUp = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, fu
     return returnData;
 });
 exports.signUp = signUp;
+const login = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const existingUser = yield User_1.default.findOne({ email: args.email });
+        if (!existingUser) {
+            throw new Error("User doesNot exist");
+        }
+        const match = yield bcryptjs_1.default.compare(args.password, existingUser.password);
+        if (!match) {
+            throw new Error("Incorrect password");
+        }
+        const token = jsonwebtoken_1.default.sign({ id: existingUser._id, userName: existingUser.userName }, process.env.SECRET);
+        const returnData = {
+            user: existingUser,
+            token,
+            expirationTime: 1,
+        };
+        return returnData;
+    }
+    catch (e) {
+        throw new Error(e);
+    }
+});
+exports.login = login;
 const deleteUser = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = utils_1.getUserId(ctx);
     if (id) {

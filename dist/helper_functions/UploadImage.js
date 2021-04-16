@@ -12,28 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = void 0;
-const User_1 = __importDefault(require("../model/User"));
-const Comment_1 = __importDefault(require("../model/Comment"));
-const Repo = {
-    developer: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const developer = yield User_1.default.findById(parent.developer);
-            return developer;
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-    }),
-    comments: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const comments = yield Comment_1.default.find({ repoId: parent._id });
-            return comments;
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-    }),
-};
-exports.default = Repo;
-//# sourceMappingURL=Repo.js.map
+exports.uploadImage = void 0;
+const shortid_1 = __importDefault(require("shortid"));
+const ExensionCheck_1 = require("./ExensionCheck");
+const uploadImage = (file) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = shortid_1.default.generate();
+    const { createReadStream, filename } = yield file;
+    yield ExensionCheck_1.extensionCheck(filename);
+});
+exports.uploadImage = uploadImage;
+//# sourceMappingURL=UploadImage.js.map

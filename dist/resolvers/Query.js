@@ -17,32 +17,8 @@ const User_1 = __importDefault(require("../model/User"));
 const Repo_1 = __importDefault(require("../model/Repo"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const Like_1 = __importDefault(require("../model/Like"));
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const utils_1 = require("../utils");
 const Query = {
-    login: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const existingUser = yield User_1.default.findOne({ email: args.email });
-            if (!existingUser) {
-                throw new Error("User doesNot exist");
-            }
-            const match = yield bcryptjs_1.default.compare(args.password, existingUser.password);
-            if (!match) {
-                throw new Error("Incorrect password");
-            }
-            const token = jsonwebtoken_1.default.sign({ id: existingUser._id, userName: existingUser.userName }, process.env.SECRET);
-            const returnData = {
-                user: existingUser,
-                token,
-                expirationTime: 1,
-            };
-            return returnData;
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-    }),
     users: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let allUsers;
         try {

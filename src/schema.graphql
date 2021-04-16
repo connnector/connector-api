@@ -7,7 +7,7 @@ type Query {
 }
 
 type Mutation {
-  signUp(userData: signup_data!): auth_data!
+  signUp(userData: signup_data!, file: Upload): auth_data!
   login(email: String!, password: String!): auth_data!
   deleteUser: User!
   updateUser(updateData: update_user_data!): User!
@@ -135,6 +135,8 @@ type auth_data {
   token: String!
   expirationTime: Int!
 }
+
+scalar Upload
 
 enum visibilityQuery {
   PUBLIC

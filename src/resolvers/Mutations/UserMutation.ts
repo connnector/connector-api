@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../../model/User";
+import { uploadImage } from "../../helper_functions/UploadImage";
 import jwt from "jsonwebtoken";
 import { Context, getUserId, AuthError } from "../../utils";
 
@@ -12,6 +13,7 @@ export const signUp = async (
       email: string;
       password: string;
     };
+    file: any;
   },
   ctx,
   info
@@ -28,6 +30,11 @@ export const signUp = async (
   if (existingUser) {
     throw new Error("Username or email already in use");
   }
+
+  if (args.file) {
+    let hashedFile: Promise<void> = uploadImage(args.file);
+  }
+
   let hashedPassword: string;
   try {
     hashedPassword = await bcrypt.hash(args.userData.password, 12);
