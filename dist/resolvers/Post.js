@@ -13,25 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
-const Post_1 = __importDefault(require("../model/Post"));
+const User_1 = __importDefault(require("../model/User"));
 const Comment_1 = __importDefault(require("../model/Comment"));
-const User = {
-    posts: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        if (args.visibility === "ALL") {
-            try {
-                const posts = yield Post_1.default.find({ developer: args._id });
-                return posts;
-            }
-            catch (e) {
-                throw new Error(e);
-            }
-        }
+const Post = {
+    developer: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const posts = yield Post_1.default.find({
-                developer: args._id,
-                visibility: args.visibility.toLowerCase(),
-            });
-            return posts;
+            const developer = yield User_1.default.findById(parent.developer);
+            return developer;
         }
         catch (e) {
             throw new Error(e);
@@ -39,22 +27,7 @@ const User = {
     }),
     comments: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const postExists = yield Post_1.default.findById(args.idOfPost);
-            if (!postExists) {
-                throw new Error("Post does not exist");
-            }
-            if (postExists.visibility === "private") {
-                throw new Error("Post is Private");
-            }
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-        try {
-            const comments = yield Comment_1.default.find({
-                developer: parent.id,
-                postId: args.idOfPost,
-            });
+            const comments = yield Comment_1.default.find({ postId: parent._id });
             return comments;
         }
         catch (e) {
@@ -62,5 +35,5 @@ const User = {
         }
     }),
 };
-exports.default = User;
-//# sourceMappingURL=User.js.map
+exports.default = Post;
+//# sourceMappingURL=Post.js.map

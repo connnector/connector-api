@@ -13,24 +13,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateComment = exports.deleteComment = exports.createComment = void 0;
-const Repo_1 = __importDefault(require("../../model/Repo"));
+const Post_1 = __importDefault(require("../../model/Post"));
 const Comment_1 = __importDefault(require("../../model/Comment"));
 const utils_1 = require("../../utils");
 const createComment = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
     let { id } = utils_1.getUserId(ctx);
     if (id) {
         try {
-            const repoValid = yield Repo_1.default.find({
-                id: args.data.idOfRepo,
+            const postValid = yield Post_1.default.find({
+                id: args.data.idOfPost,
                 visibility: "public",
             });
-            if (!repoValid) {
-                throw new Error("Repo is either private or doesnot exist");
+            if (!postValid) {
+                throw new Error("Post is either private or doesnot exist");
             }
             const newComment = yield Comment_1.default.create({
                 text: args.data.text,
                 developer: id,
-                repoId: args.data.idOfRepo,
+                postId: args.data.idOfPost,
                 likes: 0,
                 comments: 0,
             });

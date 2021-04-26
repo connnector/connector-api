@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 const User_1 = __importDefault(require("../model/User"));
-const Repo_1 = __importDefault(require("../model/Repo"));
+const Post_1 = __importDefault(require("../model/Post"));
 const Comment_1 = __importDefault(require("../model/Comment"));
 const Like_1 = __importDefault(require("../model/Like"));
 const utils_1 = require("../utils");
@@ -44,31 +44,31 @@ const Query = {
             throw new Error(e);
         }
     }),
-    repos: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+    posts: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         let { id } = utils_1.getUserId(ctx);
         if (id) {
-            let allRepos;
+            let allPosts;
             try {
-                allRepos = yield Repo_1.default.find({ visibility: "public" }, null, {
+                allPosts = yield Post_1.default.find({ visibility: "public" }, null, {
                     skip: args.skip,
                     limit: args.limit,
                 });
-                if (allRepos.length === 0) {
+                if (allPosts.length === 0) {
                     throw new Error("No More Posts,Follow others to see more posts");
                 }
-                for (let i = 0; i < allRepos.length; i++) {
+                for (let i = 0; i < allPosts.length; i++) {
                     let likeExist = yield Like_1.default.findOne({
                         developer: id,
-                        repo: allRepos[i]._id,
+                        post: allPosts[i]._id,
                     });
                     if (likeExist) {
-                        allRepos[i] = Object.assign(Object.assign({}, allRepos[i]._doc), { id: allRepos[i]._doc._id, liked: true });
+                        allPosts[i] = Object.assign(Object.assign({}, allPosts[i]._doc), { id: allPosts[i]._doc._id, liked: true });
                     }
                     else {
-                        allRepos[i] = Object.assign(Object.assign({}, allRepos[i]._doc), { id: allRepos[i]._doc._id, liked: false });
+                        allPosts[i] = Object.assign(Object.assign({}, allPosts[i]._doc), { id: allPosts[i]._doc._id, liked: false });
                     }
                 }
-                return allRepos;
+                return allPosts;
             }
             catch (e) {
                 throw new Error(e);
@@ -78,13 +78,13 @@ const Query = {
             throw new utils_1.AuthError();
         }
     }),
-    repoById: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
+    postById: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const reqRepo = yield Repo_1.default.findById(args.idQuery);
-            if (!reqRepo) {
+            const reqPost = yield Post_1.default.findById(args.idQuery);
+            if (!reqPost) {
                 throw new Error("Wrong id");
             }
-            return reqRepo;
+            return reqPost;
         }
         catch (e) {
             throw new Error(e);
@@ -92,15 +92,15 @@ const Query = {
     }),
     comments: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const repoExists = yield Repo_1.default.findOne({
-                _id: args.idOfRepo,
+            const postExists = yield Post_1.default.findOne({
+                _id: args.idOfPost,
                 visibility: "public",
             });
-            if (!repoExists) {
-                throw new Error("Repo Does Not Exist or is private");
+            if (!postExists) {
+                throw new Error("Post Does Not Exist or is private");
             }
             const comments = yield Comment_1.default.find({
-                repoId: args.idOfRepo,
+                postId: args.idOfPost,
             });
             if (comments.length === 0) {
                 throw new Error("No comments on this post");

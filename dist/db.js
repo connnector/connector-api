@@ -13,25 +13,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
-const User_1 = __importDefault(require("../model/User"));
-const Post_1 = __importDefault(require("../model/Post"));
-const Comment = {
-    post: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            return yield Post_1.default.findById(parent.postId);
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-    }),
-    developer: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            return yield User_1.default.findById(parent.developer);
-        }
-        catch (e) {
-            throw new Error(e);
-        }
-    }),
+const mongoose_1 = __importDefault(require("mongoose"));
+const connect = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield mongoose_1.default.connect(process.env.URL, {
+            useCreateIndex: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false,
+            useNewUrlParser: true,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        process.exit(1);
+    }
+});
+const databse = {
+    connect,
 };
-exports.default = Comment;
-//# sourceMappingURL=Comment.js.map
+exports.default = databse;
+//# sourceMappingURL=db.js.map
