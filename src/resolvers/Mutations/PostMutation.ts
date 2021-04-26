@@ -1,10 +1,10 @@
-import Repo from "../../model/Repo";
+import Post from "../../model/Post";
 import { Context, getUserId, AuthError } from "../../utils";
 
-export const createRepo = async (
+export const createPost = async (
   parent,
   args: {
-    repoData: {
+    postData: {
       title: string;
       visibility: string;
       desc: string;
@@ -17,11 +17,11 @@ export const createRepo = async (
   let { id } = getUserId(ctx);
 
   if (id) {
-    let newRepo: object;
+    let newPost: object;
 
     try {
-      const titleTaken = await Repo.findOne({
-        title: args.repoData.title,
+      const titleTaken = await Post.findOne({
+        title: args.postData.title,
         developer: id,
       });
 
@@ -33,8 +33,8 @@ export const createRepo = async (
     }
 
     try {
-      newRepo = Repo.create({
-        ...args.repoData,
+      newPost = Post.create({
+        ...args.postData,
         developer: id,
         totalComments: 0,
         likes: 0,
@@ -43,25 +43,25 @@ export const createRepo = async (
       throw new Error(e);
     }
 
-    return newRepo;
+    return newPost;
   } else {
     throw new AuthError();
   }
 };
-export const deleteRepo = async (
+export const deletePost = async (
   parent,
-  args: { repoId: string },
+  args: { postId: string },
   ctx: Context,
   info
 ): Promise<object> => {
   let { id } = getUserId(ctx);
   if (id) {
     try {
-      const existingRepo: object = await Repo.findByIdAndDelete(args.repoId);
-      if (!existingRepo) {
-        throw new Error("Repo Not Found");
+      const existingPost: object = await Post.findByIdAndDelete(args.postId);
+      if (!existingPost) {
+        throw new Error("Post Not Found");
       }
-      return existingRepo;
+      return existingPost;
     } catch (e) {
       throw new Error(e);
     }
@@ -69,10 +69,10 @@ export const deleteRepo = async (
     throw new AuthError();
   }
 };
-export const updateRepo = async (
+export const updatePost = async (
   parent,
   args: {
-    repoId: string;
+    postId: string;
     updateData: { title: string; visibility: string; desc: string };
   },
   ctx: Context,
@@ -81,13 +81,13 @@ export const updateRepo = async (
   let { id } = getUserId(ctx);
   if (id) {
     try {
-      let reqRepo = await Repo.findByIdAndUpdate(args.repoId, {
+      let reqPost = await Post.findByIdAndUpdate(args.postId, {
         ...args.updateData,
       });
-      if (!reqRepo) {
-        throw new Error("Repo not found or invalid update fields");
+      if (!reqPost) {
+        throw new Error("Post not found or invalid update fields");
       }
-      return reqRepo;
+      return reqPost;
     } catch (e) {
       throw new Error(e);
     }

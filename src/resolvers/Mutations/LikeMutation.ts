@@ -1,43 +1,43 @@
 import Like from "../../model/Like";
-import Repo from "../../model/Repo";
+import Post from "../../model/Post";
 import { Context, getUserId, AuthError } from "../../utils";
 
 export const like = async (
   parent,
-  args: { repoId: string },
+  args: { postId: string },
   ctx: Context,
   info
 ): Promise<object> => {
   let { id } = getUserId(ctx);
   if (id) {
     try {
-      const repoValid: any = await Repo.findOne({
-        _id: args.repoId,
+      const postValid: any = await Post.findOne({
+        _id: args.postId,
         visibility: "public",
       });
-      if (!repoValid) {
-        throw new Error("Repo is either private or doesnot exist");
+      if (!postValid) {
+        throw new Error("Post is either private or doesnot exist");
       }
 
       const alreadyLiked = await Like.findOne({
-        repo: args.repoId,
+        post: args.postId,
         developer: id,
       });
       if (alreadyLiked) {
         await alreadyLiked.delete();
-        repoValid.likes = repoValid.likes - 1;
-        await repoValid.save();
+        postValid.likes = postValid.likes - 1;
+        await postValid.save();
       } else {
         const newLike = new Like({
-          repo: args.repoId,
+          post: args.postId,
           developer: id,
         });
 
         await newLike.save();
-        repoValid.likes = repoValid.likes + 1;
-        await repoValid.save();
+        postValid.likes = postValid.likes + 1;
+        await postValid.save();
       }
-      return { number: repoValid.likes };
+      return { number: postValid.likes };
     } catch (e) {
       throw new Error(e);
     }

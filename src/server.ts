@@ -3,7 +3,7 @@ import { GraphQLServer, PubSub } from "graphql-yoga";
 import mongoose from "mongoose";
 import Query from "./resolvers/Query";
 import User from "./resolvers/User";
-import Repo from "./resolvers/Repo";
+import Post from "./resolvers/Post";
 import Mutation from "./resolvers/Mutation";
 import Subscription from "./resolvers/Subscriptions/Subscription";
 import Comment from "./resolvers/Comment";
@@ -22,7 +22,7 @@ const server = new GraphQLServer({
   resolvers: {
     Query,
     User,
-    Repo,
+    Post,
     Mutation,
     Subscription,
     Comment,
@@ -40,7 +40,6 @@ server.express.get("/uploads/*", (req, res, next) => {
   res.sendFile(pathDir);
   next();
 });
-console.log(process.env.URL);
 mongoose
   .connect(process.env.URL, {
     useNewUrlParser: true,

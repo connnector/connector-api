@@ -1,20 +1,20 @@
 import User from "../model/User";
-import Repo from "../model/Repo";
+import Post from "../model/Post";
 const Comment = {
-  repo: async (
-    parent: { id: string; text: string; repoId: string; developer: string },
+  post: async (
+    parent: { id: string; text: string; postId: string; developer: string },
     args,
     ctx,
     info
   ): Promise<object> => {
     try {
-      return await Repo.findById(parent.repoId);
+      return await Post.findById(parent.postId);
     } catch (e) {
       throw new Error(e);
     }
   },
   developer: async (
-    parent: { id: string; text: string; repoId: string; developer: string },
+    parent: { id: string; text: string; postId: string; developer: string },
     args,
     ctx,
     info

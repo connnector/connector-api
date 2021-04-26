@@ -36,7 +36,6 @@ server.express.get("/uploads/*", (req, res, next) => {
     res.sendFile(pathDir);
     next();
 });
-console.log(process.env.URL);
 mongoose_1.default
     .connect(process.env.URL, {
     useNewUrlParser: true,

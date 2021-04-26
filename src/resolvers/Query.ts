@@ -1,13 +1,9 @@
 import User from "../model/User";
-import Repo from "../model/Repo";
+import Post from "../model/Post";
 import Comment from "../model/Comment";
 import Like from "../model/Like";
 import { Document, Model, Mongoose } from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { Context } from "../utils";
 import { getUserId, AuthError } from "../utils";
-import { like } from "./Mutations/LikeMutation";
 
 const Query = {
   users: async (
@@ -43,7 +39,7 @@ const Query = {
       throw new Error(e);
     }
   },
-  repos: async (
+  posts: async (
     parent,
     args: { nameQuery: string; skip: number; limit: number },
     ctx,
@@ -51,37 +47,37 @@ const Query = {
   ): Promise<Document<any>[]> => {
     let { id } = getUserId(ctx);
     if (id) {
-      let allRepos: any;
+      let allPosts: any;
       try {
-        allRepos = await Repo.find({ visibility: "public" }, null, {
+        allPosts = await Post.find({ visibility: "public" }, null, {
           skip: args.skip,
           limit: args.limit,
         });
-        if (allRepos.length === 0) {
+        if (allPosts.length === 0) {
           throw new Error("No More Posts,Follow others to see more posts");
         }
 
-        for (let i = 0; i < allRepos.length; i++) {
+        for (let i = 0; i < allPosts.length; i++) {
           let likeExist: any = await Like.findOne({
             developer: id,
-            repo: allRepos[i]._id,
+            post: allPosts[i]._id,
           });
           if (likeExist) {
-            allRepos[i] = {
-              ...allRepos[i]._doc,
-              id: allRepos[i]._doc._id,
+            allPosts[i] = {
+              ...allPosts[i]._doc,
+              id: allPosts[i]._doc._id,
               liked: true,
             };
           } else {
-            allRepos[i] = {
-              ...allRepos[i]._doc,
-              id: allRepos[i]._doc._id,
+            allPosts[i] = {
+              ...allPosts[i]._doc,
+              id: allPosts[i]._doc._id,
               liked: false,
             };
           }
         }
 
-        return allRepos;
+        return allPosts;
       } catch (e) {
         throw new Error(e);
       }
@@ -89,38 +85,38 @@ const Query = {
       throw new AuthError();
     }
   },
-  repoById: async (
+  postById: async (
     parent,
     args: { idQuery: string },
     ctx,
     info
   ): Promise<Document<object>> => {
     try {
-      const reqRepo: Document<object> = await Repo.findById(args.idQuery);
-      if (!reqRepo) {
+      const reqPost: Document<object> = await Post.findById(args.idQuery);
+      if (!reqPost) {
         throw new Error("Wrong id");
       }
-      return reqRepo;
+      return reqPost;
     } catch (e) {
       throw new Error(e);
     }
   },
   comments: async (
     parent,
-    args: { idOfRepo: string },
+    args: { idOfPost: string },
     ctx,
     info
   ): Promise<Document<object>[]> => {
     try {
-      const repoExists: Document<object> = await Repo.findOne({
-        _id: args.idOfRepo,
+      const postExists: Document<object> = await Post.findOne({
+        _id: args.idOfPost,
         visibility: "public",
       });
-      if (!repoExists) {
-        throw new Error("Repo Does Not Exist or is private");
+      if (!postExists) {
+        throw new Error("Post Does Not Exist or is private");
       }
       const comments: Document<object>[] = await Comment.find({
-        repoId: args.idOfRepo,
+        postId: args.idOfPost,
       });
       if (comments.length === 0) {
         throw new Error("No comments on this post");

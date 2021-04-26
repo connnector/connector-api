@@ -1,8 +1,8 @@
-import Repo from "../model/Repo";
+import Post from "../model/Post";
 import Comment from "../model/Comment";
 
 const User = {
-  repos: async (
+  posts: async (
     parent: { id: string; name: string; email: string },
     args,
     ctx,
@@ -10,36 +10,36 @@ const User = {
   ): Promise<object> => {
     if (args.visibility === "ALL") {
       try {
-        const repos = await Repo.find({ developer: args._id });
-        return repos;
+        const posts = await Post.find({ developer: args._id });
+        return posts;
       } catch (e) {
         throw new Error(e);
       }
     }
     try {
-      const repos = await Repo.find({
+      const posts = await Post.find({
         developer: args._id,
         visibility: args.visibility.toLowerCase(),
       });
-      return repos;
+      return posts;
     } catch (e) {
       throw new Error(e);
     }
   },
   comments: async (
     parent,
-    args: { idOfRepo: string },
+    args: { idOfPost: string },
     ctx,
     info
   ): Promise<object> => {
     try {
-      const repoExists: any = await Repo.findById(args.idOfRepo);
+      const postExists: any = await Post.findById(args.idOfPost);
 
-      if (!repoExists) {
-        throw new Error("Repo does not exist");
+      if (!postExists) {
+        throw new Error("Post does not exist");
       }
-      if (repoExists.visibility === "private") {
-        throw new Error("Repo is Private");
+      if (postExists.visibility === "private") {
+        throw new Error("Post is Private");
       }
     } catch (e) {
       throw new Error(e);
@@ -47,7 +47,7 @@ const User = {
     try {
       const comments: any = await Comment.find({
         developer: parent.id,
-        repoId: args.idOfRepo,
+        postId: args.idOfPost,
       });
       return comments;
     } catch (e) {

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const repoSchema = new Schema(
+const postSchema = new Schema(
   {
     title: { type: String, required: true },
     visibility: { type: String, required: true },
@@ -17,6 +17,6 @@ const repoSchema = new Schema(
   }
 );
 
-const Repo = mongoose.model("Repo", repoSchema);
+const Post = mongoose.model("Post", postSchema);
 
-export { Repo as default };
+export { Post as default };
