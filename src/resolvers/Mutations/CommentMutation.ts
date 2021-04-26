@@ -1,27 +1,27 @@
-import Repo from "../../model/Repo";
+import Post from "../../model/Post";
 import Comment from "../../model/Comment";
 import { Context, getUserId, AuthError } from "../../utils";
 
 export const createComment = async (
   parent,
-  args: { data: { text: string; idOfRepo: string } },
+  args: { data: { text: string; idOfPost: string } },
   ctx: Context,
   info
 ): Promise<object> => {
   let { id } = getUserId(ctx);
   if (id) {
     try {
-      const repoValid = await Repo.find({
-        id: args.data.idOfRepo,
+      const postValid = await Post.find({
+        id: args.data.idOfPost,
         visibility: "public",
       });
-      if (!repoValid) {
-        throw new Error("Repo is either private or doesnot exist");
+      if (!postValid) {
+        throw new Error("Post is either private or doesnot exist");
       }
       const newComment: object = await Comment.create({
         text: args.data.text,
         developer: id,
-        repoId: args.data.idOfRepo,
+        postId: args.data.idOfPost,
         likes: 0,
         comments: 0,
       });

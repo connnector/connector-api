@@ -1,9 +1,9 @@
 type Query {
   users(nameQuery: String): [User!]!
-  repos(nameQuery: String, skip: Int!, limit: Int!): [Repo!]!
-  comments(idOfRepo: ID!): [Comment!]!
+  posts(nameQuery: String, skip: Int!, limit: Int!): [Post!]!
+  comments(idOfPost: ID!): [Comment!]!
   userById(idQuery: ID!): User!
-  repoById(idQuery: ID!): Repo!
+  postById(idQuery: ID!): Post!
 }
 
 type Mutation {
@@ -11,14 +11,14 @@ type Mutation {
   login(email: String!, password: String!): auth_data!
   deleteUser: User!
   updateUser(updateData: update_user_data!): User!
-  createRepo(repoData: create_repo_data!): Repo!
-  deleteRepo(repoId: ID!): Repo!
-  updateRepo(repoId: ID!, updateData: update_repo_data): Repo!
+  createPost(postData: create_post_data!): Post!
+  deletePost(postId: ID!): Post!
+  updatePost(postId: ID!, updateData: update_post_data): Post!
   createComment(data: create_comment_data!): Comment!
   deleteComment(commentId: ID!): Comment!
   updateComment(commentId: ID!, data: update_comment_data): Comment!
   startChatting(data: chat_input_data): Chat!
-  like(repoId: String!): likes_count
+  like(postId: String!): likes_count
 }
 
 type likes_count {
@@ -33,11 +33,11 @@ type User {
   name: String!
   userName: String!
   email: String!
-  repos(visibility: visibilityQuery!): [Repo]!
-  comments(idOfRepo: ID!): [Comment]!
+  posts(visibility: visibilityQuery!): [Post]!
+  comments(idOfPost: ID!): [Comment]!
 }
 
-type Repo {
+type Post {
   id: ID!
   title: String!
   desc: String!
@@ -54,13 +54,13 @@ type Repo {
 type Comment {
   id: ID!
   text: String!
-  repo: Repo!
+  post: Post!
   developer: User!
 }
 
 type Like {
   id: ID!
-  repo: Repo!
+  post: Post!
   developer: User!
 }
 
@@ -104,7 +104,7 @@ input signup_data {
   email: String!
   password: String!
 }
-input create_repo_data {
+input create_post_data {
   title: String!
   visibility: String!
   desc: String!
@@ -116,7 +116,7 @@ input update_user_data {
   email: String
 }
 
-input update_repo_data {
+input update_post_data {
   title: String
   visibility: String
   desc: String
@@ -124,7 +124,7 @@ input update_repo_data {
 
 input create_comment_data {
   text: String!
-  idOfRepo: ID!
+  idOfPost: ID!
 }
 input update_comment_data {
   text: String!

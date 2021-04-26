@@ -1,8 +1,8 @@
 import User from "../model/User";
-import repo from "../model/Repo";
+import post from "../model/Post";
 import Comment from "../model/Comment";
 
-const Repo = {
+const Post = {
   developer: async (parent, args, ctx, info): Promise<object> => {
     try {
       const developer = await User.findById(parent.developer);
@@ -13,7 +13,7 @@ const Repo = {
   },
   comments: async (parent, args, ctx, info): Promise<object> => {
     try {
-      const comments = await Comment.find({ repoId: parent._id });
+      const comments = await Comment.find({ postId: parent._id });
       return comments;
     } catch (e) {
       throw new Error(e);
@@ -21,4 +21,4 @@ const Repo = {
   },
 };
 
-export { Repo as default };
+export { Post as default };

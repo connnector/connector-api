@@ -4,7 +4,7 @@ import {
   deleteUser,
   updateUser,
 } from "./Mutations/UserMutation";
-import { createRepo, deleteRepo, updateRepo } from "./Mutations/RepoMutation";
+import { createPost, deletePost, updatePost } from "./Mutations/PostMutation";
 import {
   createComment,
   updateComment,
@@ -18,9 +18,9 @@ const Mutation = {
   login,
   deleteUser,
   updateUser,
-  createRepo,
-  deleteRepo,
-  updateRepo,
+  createPost,
+  deletePost,
+  updatePost,
   createComment,
   updateComment,
   deleteComment,

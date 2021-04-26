@@ -15,10 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.uploadImage = void 0;
 const shortid_1 = __importDefault(require("shortid"));
 const ExensionCheck_1 = require("./ExensionCheck");
+const { createWriteStream, unlinkSync } = require("fs");
+const path = require("path");
 const uploadImage = (file) => __awaiter(void 0, void 0, void 0, function* () {
     const id = shortid_1.default.generate();
     const { createReadStream, filename } = yield file;
     yield ExensionCheck_1.extensionCheck(filename);
+    const save_path = path.join(__dirname, "../../images", `/${id}-${filename}`);
+    yield new Promise((resolve, reject) => createReadStream()
+        .on("error", (error) => {
+        if (createReadStream().truncated)
+            // delete the truncated file
+            unlinkSync(path);
+        reject(error);
+    })
+        .pipe(createWriteStream(save_path))
+        .on("error", (error) => reject(error))
+        .on("finish", () => resolve({ path })));
 });
 exports.uploadImage = uploadImage;
 //# sourceMappingURL=UploadImage.js.map

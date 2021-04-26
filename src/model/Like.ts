@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const likeSchema = new Schema({
   developer: { type: mongoose.Types.ObjectId, required: true, rep: "User" },
-  repo: { type: mongoose.Types.ObjectId, required: true, ref: "Repo" },
+  post: { type: mongoose.Types.ObjectId, required: true, ref: "Post" },
 });
 
 const Like = mongoose.model("Like", likeSchema);
