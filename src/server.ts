@@ -1,6 +1,16 @@
 import dotenv from "dotenv";
-import { GraphQLServer, PubSub } from "graphql-yoga";
-import mongoose from "mongoose";
+import { ApolloServer, PubSub } from "apollo-server-express";
+import { graphqlUploadExpress, GraphQLUpload } from "graphql-upload";
+import express from "express";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
+import xss from "xss-clean";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import http from "http";
+import { importSchema } from "graphql-import";
+import isAuth from "./middlewares/isAuth";
+import databse from "./db";
 import Query from "./resolvers/Query";
 import User from "./resolvers/User";
 import Post from "./resolvers/Post";
@@ -8,49 +18,86 @@ import Mutation from "./resolvers/Mutation";
 import Subscription from "./resolvers/Subscriptions/Subscription";
 import Comment from "./resolvers/Comment";
 import Chat from "./resolvers/Chat";
-import Chalk from "chalk";
+import chalk from "chalk";
 import path from "path";
 
 dotenv.config();
 
-const PORT: string = process.env.PORT;
+const typeDefs = importSchema("./src/schema.graphql");
 
+const apiLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 50000,
+  message: "Too many requests from this IP, please try again after 15 minutes",
+});
+
+const resolvers = {
+  Query,
+  User,
+  Post,
+  Mutation,
+  Subscription,
+  Comment,
+  Chat,
+};
+
+const PORT: string = process.env.PORT;
 const pubsub = new PubSub();
 
-const server = new GraphQLServer({
-  typeDefs: "./src/schema.graphql",
-  resolvers: {
-    Query,
-    User,
-    Post,
-    Mutation,
-    Subscription,
-    Comment,
-    Chat,
-  },
-  context: (request) => ({
-    ...request,
-    pubsub,
-  }),
-});
+const app = express();
 
-server.express.get("/uploads/*", (req, res, next) => {
-  const pathDir = path.join(__dirname, `/uploads`);
-
-  res.sendFile(pathDir);
-  next();
-});
-mongoose
-  .connect(process.env.URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
+app.use(apiLimiter);
+app.use(xss());
+app.use(
+  helmet({
+    contentSecurityPolicy:
+      process.env.NODE_ENV === "production" ? undefined : false,
   })
+);
+app.use(mongoSanitize());
+app.use(cors());
+app.use(graphqlUploadExpress());
+
+app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
+
+app.get("/", (req, res) =>
+  res.json({ "Dev-Connector version": "v1", status: "healthy" })
+);
+
+const httpServer = http.createServer(app);
+
+const server = new ApolloServer({
+  typeDefs,
+  uploads: false,
+  resolvers: {
+    ...resolvers,
+    Upload: GraphQLUpload,
+  },
+  context: ({ req, res, connection }) => {
+    if (connection) {
+      return { ...connection, pubsub, res, req };
+    } else {
+      return { ...isAuth(req), pubsub, res, req };
+    }
+  },
+});
+
+server.applyMiddleware({ app });
+
+databse
+  .connect()
   .then(() => {
-    server.start(({ port: PORT }) => {
-      console.log(Chalk.hex("#fab95b").bold(`The Server is Up ${PORT}`));
+    // Use native http server to allow subscriptions
+    httpServer.listen(PORT || 4000, () => {
+      console.log(
+        chalk
+          .hex("#fab95b")
+          .bold(
+            `🚀 Server ready at http://localhost:${process.env.PORT || 4000}${
+              server.graphqlPath
+            }`
+          )
+      );
     });
   })
-  .catch((e) => {
-    console.log(e);
-  });
+  .catch((e) => console.log(chalk.red(e)));

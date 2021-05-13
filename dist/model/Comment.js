@@ -9,7 +9,7 @@ const Schema = mongoose_1.default.Schema;
 const commentSchema = new Schema({
     text: { type: String, required: true },
     developer: { type: mongoose_1.default.Types.ObjectId, required: true, rep: "User" },
-    repoId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: "Repo" },
+    postId: { type: mongoose_1.default.Types.ObjectId, required: true, ref: "Post" },
 });
 const Comment = mongoose_1.default.model("Comment", commentSchema);
 exports.default = Comment;
