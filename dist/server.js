@@ -71,7 +71,7 @@ db_1.default
     .connect()
     .then(() => {
     // Use native http server to allow subscriptions
-    httpServer.listen(process.env.PORT || 4000, () => {
+    httpServer.listen(PORT || 4000, () => {
         console.log(chalk_1.default
             .hex("#fab95b")
             .bold(`🚀 Server ready at http://localhost:${process.env.PORT || 4000}${server.graphqlPath}`));

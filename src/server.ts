@@ -8,6 +8,7 @@ import xss from "xss-clean";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import http from "http";
+import { importSchema } from "graphql-import";
 import isAuth from "./middlewares/isAuth";
 import databse from "./db";
 import Query from "./resolvers/Query";
@@ -21,6 +22,8 @@ import chalk from "chalk";
 import path from "path";
 
 dotenv.config();
+
+const typeDefs = importSchema("./src/schema.graphql");
 
 const apiLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
@@ -64,7 +67,7 @@ app.get("/", (req, res) =>
 const httpServer = http.createServer(app);
 
 const server = new ApolloServer({
-  typeDefs: "./src/schema.graphql",
+  typeDefs,
   uploads: false,
   resolvers: {
     ...resolvers,
@@ -78,13 +81,14 @@ const server = new ApolloServer({
     }
   },
 });
+
 server.applyMiddleware({ app });
 
 databse
   .connect()
   .then(() => {
     // Use native http server to allow subscriptions
-    httpServer.listen(process.env.PORT || 4000, () => {
+    httpServer.listen(PORT || 4000, () => {
       console.log(
         chalk
           .hex("#fab95b")
