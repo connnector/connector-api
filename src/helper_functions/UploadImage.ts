@@ -8,7 +8,7 @@ export const uploadImage = async (file) => {
   const { createReadStream, filename } = await file;
 
   await extensionCheck(filename);
-  const save_path = path.join(__dirname, "../../images", `/${id}-${filename}`);
+  const save_path = path.join(__dirname, "../../uploads", `/${id}-${filename}`);
 
   await new Promise((resolve, reject) =>
     createReadStream()
