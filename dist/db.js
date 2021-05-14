@@ -14,17 +14,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const chalk_1 = __importDefault(require("chalk"));
 const connect = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(process.env.URL, {
+        const conn = yield mongoose_1.default.connect(process.env.MONGO_URI, {
             useCreateIndex: true,
             useUnifiedTopology: true,
             useFindAndModify: false,
             useNewUrlParser: true,
         });
+        console.log(chalk_1.default.hex("#FAFAD2").bold(`mongodb connected :${conn.connection.host}`));
     }
     catch (error) {
-        console.log(error);
+        console.log(chalk_1.default.hex("#ff6347").bold(`Error:${error.message}`));
         process.exit(1);
     }
 });

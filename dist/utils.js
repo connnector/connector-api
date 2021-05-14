@@ -25,7 +25,7 @@ const getUserId = (ctx) => {
     const Authorization = ctx.request.get("Authorization");
     if (Authorization) {
         const token = Authorization.replace("Bearer ", "");
-        const { id, userName } = jwt.verify(token, process.env.SECRET);
+        const { id, userName } = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         return { id, userName };
     }
     return null;

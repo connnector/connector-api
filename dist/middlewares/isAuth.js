@@ -27,7 +27,7 @@ const isAuth = (req) => {
     // console.log(token);
     let decodedToken;
     try {
-        decodedToken = jsonwebtoken_1.default.verify(token, process.env.SECRET);
+        decodedToken = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
         if (!decodedToken) {
             return {
                 isAuth,
