@@ -10,6 +10,17 @@ We love your input! We want to make contributing to this project as easy and tra
 
 ## Our Development Process
 
+#### Step 1
+
+Navigate to `/` and set the following environment variables:
+
+```
+MONGO_URI=XXX
+PORT=4000
+ACCESS_TOKEN_SECRET=xxxxxxxxx
+
+```
+
 All changes happen through pull requests. Pull requests are the best way to propose changes. We actively welcome your pull requests and invite you to submit pull requests directly <a href="https://github.com/connnector/connnector-api/pulls">here</a>, and after review, these can be merged into the project.
 
 ## Using the Project's Standard Commit Messages
@@ -24,7 +35,8 @@ This project is using the [conventional commits](https://www.conventionalcommits
 ## Quickstart Local Development
 
 - Run `npm i`
-- Run `npm run start`
+- Run `npm run watch-ts` for watching compiled typescript
+- Run `npm run watch-node` for starting out API server
 - Read `README.md` for more information and a fixes for known development issues.
 
 ## Issues
