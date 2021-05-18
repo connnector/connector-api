@@ -129,6 +129,10 @@ dist/
 tmp/
 temp/
 
+# uploaded files
+
+uploads/
+
 ### react ###
 .DS_*
 **/*.backup.*

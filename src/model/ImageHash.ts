@@ -13,4 +13,6 @@ const imageHashSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Image", imageHashSchema);
+const ImageHash = mongoose.model("ImageHash", imageHashSchema);
+
+export { ImageHash as default };

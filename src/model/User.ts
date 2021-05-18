@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: mongoose.Types.ObjectId,
+    ref: "ImageHash",
+  },
 });
 
 const User = mongoose.model("User", userSchema);
