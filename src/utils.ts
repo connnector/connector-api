@@ -4,12 +4,14 @@ export interface Context {
   request: any;
   pubsub;
 }
-
 export const getUserId = (ctx: Context) => {
   const Authorization = ctx.request.get("Authorization");
   if (Authorization) {
     const token = Authorization.replace("Bearer ", "");
-    const { id, userName } = jwt.verify(token, process.env.SECRET) as {
+    const { id, userName } = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET
+    ) as {
       id: string;
       userName: string;
     };
