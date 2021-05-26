@@ -20,7 +20,7 @@ import Comment from "./resolvers/Comment";
 import Chat from "./resolvers/Chat";
 import chalk from "chalk";
 import path from "path";
-
+//start
 dotenv.config();
 
 const typeDefs = importSchema("./src/schema.graphql");

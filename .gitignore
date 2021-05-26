@@ -91,15 +91,12 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Storybook build outputs
 .out
 .storybook-out
 storybook-static
 
-# rollup.js default build output
-dist/
 
 # Gatsby files
 .cache/
@@ -141,7 +138,6 @@ uploads/
 node_modules
 
 *.sublime*
-/dist
 psd
 thumb
 sketch
