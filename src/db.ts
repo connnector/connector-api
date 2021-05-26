@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import chalk from "chalk";
 const connect = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const conn = await mongoose.connect(process.env.URL, {
       useCreateIndex: true,
       useUnifiedTopology: true,
       useFindAndModify: false,

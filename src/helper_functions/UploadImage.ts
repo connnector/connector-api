@@ -2,6 +2,7 @@ import shortid from "shortid";
 import { extensionCheck } from "./ExensionCheck";
 const { createWriteStream, unlinkSync } = require("fs");
 const path = require("path");
+import { findInDb } from "./FindInDb";
 
 export const uploadImage = async (file) => {
   const id = shortid.generate();
@@ -22,4 +23,8 @@ export const uploadImage = async (file) => {
       .on("error", (error) => reject(error))
       .on("finish", () => resolve({ path }))
   );
+
+  const fileName = `${id}-${filename}`;
+
+  await findInDb(fileName);
 };

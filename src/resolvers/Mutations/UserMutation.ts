@@ -18,18 +18,18 @@ export const signUp = async (
   ctx,
   info
 ): Promise<object> => {
-  let existingUser;
-  try {
-    existingUser =
-      (await User.findOne({ email: args.userData.email })) ||
-      (await User.findOne({ userName: args.userData.userName }));
-  } catch (e) {
-    throw new Error(e);
-  }
+  // let existingUser;
+  // try {
+  //   existingUser =
+  //     (await User.findOne({ email: args.userData.email })) ||
+  //     (await User.findOne({ userName: args.userData.userName }));
+  // } catch (e) {
+  //   throw new Error(e);
+  // }
 
-  if (existingUser) {
-    throw new Error("Username or email already in use");
-  }
+  // if (existingUser) {
+  //   throw new Error("Username or email already in use");
+  // }
 
   if (args.file) {
     let hashedFile: Promise<void> = uploadImage(args.file);

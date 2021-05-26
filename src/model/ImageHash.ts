@@ -9,7 +9,6 @@ const imageHashSchema = new Schema({
   },
   fileName: {
     type: String,
-    required: true,
   },
 });
 
