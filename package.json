@@ -31,6 +31,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.17",
     "shortid": "^2.2.16",
+    "tsc": "^2.0.3",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
