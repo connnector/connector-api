@@ -16,13 +16,10 @@ exports.startChatting = void 0;
 const Chat_1 = __importDefault(require("../../model/Chat"));
 const User_1 = __importDefault(require("../../model/User"));
 const ChatData_1 = __importDefault(require("../../model/ChatData"));
-const utils_1 = require("../../utils");
+const authCheck_1 = require("../../helper_functions/authCheck");
 const mongoose_1 = require("mongoose");
-const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userName } = utils_1.getUserId(ctx);
-    if (!userName) {
-        throw new utils_1.AuthError();
-    }
+const startChatting = (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
+    authCheck_1.authCheck(context);
     const recieverExist = yield User_1.default.findOne({ userName: args.data.user2 });
     if (!recieverExist) {
         throw new Error("reciever doesnot exist");
@@ -34,19 +31,19 @@ const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, voi
         sess.startTransaction();
         chat = yield Chat_1.default.findOne({
             $or: [
-                { user1: userName, user2: args.data.user2 },
-                { user1: args.data.user2, user2: userName },
+                { user1: context.userName, user2: args.data.user2 },
+                { user1: args.data.user2, user2: context.userName },
             ],
         });
         if (!chat) {
             chat = new Chat_1.default({
-                user1: userName,
+                user1: context.userName,
                 user2: args.data.user2,
             });
             yield chat.save({ session: sess });
         }
         newChatData = new ChatData_1.default({
-            user: userName,
+            user: context.userName,
             text: args.data.text,
             parentChat: chat.id,
         });
@@ -56,7 +53,7 @@ const startChatting = (parent, args, ctx, info) => __awaiter(void 0, void 0, voi
     catch (e) {
         throw new Error(e);
     }
-    ctx.pubsub.publish(`chat ${newChatData.parentChat}`, {
+    context.pubsub.publish(`chat ${newChatData.parentChat}`, {
         liveChat: newChatData,
     });
     return chat;

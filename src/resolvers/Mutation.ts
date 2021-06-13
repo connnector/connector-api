@@ -1,4 +1,5 @@
 import {
+  sendOtp,
   signUp,
   login,
   deleteUser,
@@ -14,6 +15,7 @@ import { startChatting } from "./Mutations/ChatMutation";
 import { like } from "./Mutations/LikeMutation";
 
 const Mutation = {
+  sendOtp,
   signUp,
   login,
   deleteUser,

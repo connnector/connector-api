@@ -1,28 +1,48 @@
 import bcrypt from "bcryptjs";
 import User from "../../model/User";
+import Otp from "../../model/Otp";
 import { uploadImage } from "../../helper_functions/UploadImage";
 import jwt from "jsonwebtoken";
 import { Context, getUserId, AuthError } from "../../utils";
+import { sendConfirmationEmail } from "../../helper_functions/sendMail";
+// import { confirmOtp } from "../../helper_functions/confirmOtp";
 
-export const signUp = async (
+const confirmOtp = async (databaseId, otp) => {
+  let otp_object: any;
+  //finding otp with given fields
+
+  try {
+    otp_object = await Otp.findOne({ _id: databaseId });
+  } catch (e) {
+    throw new Error(e);
+  }
+
+  if (!otp_object) {
+    throw new Error("Incorrect Otp");
+  }
+
+  if (otp_object.text !== otp) {
+    throw new Error("Incorrect Otp");
+  }
+  return otp_object;
+};
+
+export const sendOtp = async (
   parent,
   args: {
-    userData: {
-      userName: string;
-      name: string;
+    data: {
       email: string;
       password: string;
     };
-    file: any;
   },
   ctx,
   info
 ): Promise<object> => {
   // let existingUser;
+  const email: string = args.data.email.toLowerCase();
+
   // try {
-  //   existingUser =
-  //     (await User.findOne({ email: args.userData.email })) ||
-  //     (await User.findOne({ userName: args.userData.userName }));
+  //   existingUser = await User.findOne({ email: args.data.email });
   // } catch (e) {
   //   throw new Error(e);
   // }
@@ -31,22 +51,80 @@ export const signUp = async (
   //   throw new Error("Username or email already in use");
   // }
 
-  if (args.file) {
-    let hashedFile: Promise<void> = uploadImage(args.file);
+  const otp = await sendConfirmationEmail(email);
+
+  const otp_already_sent_previously: any = await Otp.findOne({ email });
+
+  if (otp_already_sent_previously) {
+    if (args.data.password) {
+      try {
+        otp_already_sent_previously.password = await bcrypt.hash(
+          args.data.password,
+          12
+        );
+      } catch (e) {
+        throw new Error();
+      }
+    }
+
+    try {
+      otp_already_sent_previously.text = otp;
+    } catch (e) {
+      throw new Error(e);
+    }
+    await otp_already_sent_previously.save();
+
+    return { databaseId: otp_already_sent_previously._id };
   }
 
   let hashedPassword: string;
+
   try {
-    hashedPassword = await bcrypt.hash(args.userData.password, 12);
+    hashedPassword = await bcrypt.hash(args.data.password, 12);
   } catch (e) {
     throw new Error();
   }
+
+  let otp_object: any;
+
+  try {
+    otp_object = new Otp({
+      text: otp,
+      email: args.data.email,
+      password: hashedPassword,
+    });
+  } catch (e) {
+    throw new Error(e);
+  }
+
+  await otp_object.save();
+
+  return { databaseId: otp_object._id };
+};
+
+export const signUp = async (
+  parent,
+  args: {
+    userData: {
+      userName: string;
+      name: string;
+    };
+    databaseId: String;
+    otp: string;
+    file: any;
+  },
+  ctx,
+  info
+): Promise<object> => {
   let newUser: any;
+
+  const otp_object: any = await confirmOtp(args.databaseId, args.otp);
 
   try {
     newUser = await User.create({
       ...args.userData,
-      password: hashedPassword,
+      email: otp_object.email,
+      password: otp_object.password,
     });
   } catch (e) {
     throw new Error(e);
@@ -55,6 +133,15 @@ export const signUp = async (
     { id: newUser._id, userName: newUser.userName },
     process.env.SECRET
   );
+
+  try {
+    await Otp.deleteOne({
+      _id: otp_object.id,
+    });
+  } catch (e) {
+    throw new Error(e);
+  }
+
   const returnData: object = {
     user: newUser,
     token,

@@ -1,24 +1,22 @@
 import Chat from "../../model/Chat";
 import User from "../../model/User";
 import ChatData from "../../model/ChatData";
-import { Context, getUserId, AuthError } from "../../utils";
+import { authCheck } from "../../helper_functions/authCheck";
 import { startSession } from "mongoose";
 
 export const startChatting = async (
   parent,
   args: any,
-  ctx: Context,
+  context: any,
   info
 ): Promise<object> => {
-  const { userName } = getUserId(ctx);
+  authCheck(context);
 
-  if (!userName) {
-    throw new AuthError();
-  }
   const recieverExist = await User.findOne({ userName: args.data.user2 });
   if (!recieverExist) {
     throw new Error("reciever doesnot exist");
   }
+
   let chat: any = null;
   let newChatData: any = null;
   try {
@@ -26,19 +24,19 @@ export const startChatting = async (
     sess.startTransaction();
     chat = await Chat.findOne({
       $or: [
-        { user1: userName, user2: args.data.user2 },
-        { user1: args.data.user2, user2: userName },
+        { user1: context.userName, user2: args.data.user2 },
+        { user1: args.data.user2, user2: context.userName },
       ],
     });
     if (!chat) {
       chat = new Chat({
-        user1: userName,
+        user1: context.userName,
         user2: args.data.user2,
       });
       await chat.save({ session: sess });
     }
     newChatData = new ChatData({
-      user: userName,
+      user: context.userName,
       text: args.data.text,
       parentChat: chat.id,
     });
@@ -49,7 +47,7 @@ export const startChatting = async (
     throw new Error(e);
   }
 
-  ctx.pubsub.publish(`chat ${newChatData.parentChat}`, {
+  context.pubsub.publish(`chat ${newChatData.parentChat}`, {
     liveChat: newChatData,
   });
 

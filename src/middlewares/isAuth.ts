@@ -26,7 +26,7 @@ const isAuth = (req) => {
 
   let decodedToken: { id; userName };
   try {
-    decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken) {
       return {
         isAuth,
@@ -40,12 +40,15 @@ const isAuth = (req) => {
 
   // shows the user is an authenticated user
   // pulls data off the token
-  const { id } = decodedToken;
+  const { id, userName } = decodedToken;
   isAuth = true;
+
+  console.log(isAuth, userName, id);
 
   return {
     isAuth,
     id,
+    userName,
   };
 };
 

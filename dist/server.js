@@ -61,15 +61,14 @@ const server = new apollo_server_express_1.ApolloServer({
     uploads: false,
     resolvers: Object.assign(Object.assign({}, resolvers), { Upload: graphql_upload_1.GraphQLUpload }),
     context: ({ req, res, connection }) => {
-        if (connection) {
-            return Object.assign(Object.assign({}, connection), { pubsub, res, req });
-        }
-        else {
-            return Object.assign(Object.assign({}, isAuth_1.default(req)), { pubsub, res, req });
-        }
+        return Object.assign(Object.assign({}, isAuth_1.default(req)), { pubsub, res, req });
+    },
+    subscriptions: {
+        path: "/subscriptions",
     },
 });
 server.applyMiddleware({ app });
+server.installSubscriptionHandlers(httpServer);
 db_1.default
     .connect()
     .then(() => {
@@ -78,6 +77,9 @@ db_1.default
         console.log(chalk_1.default
             .hex("#fab95b")
             .bold(`🚀 Server ready at http://localhost:${process.env.PORT || 4000}${server.graphqlPath}`));
+        console.log(chalk_1.default
+            .hex("#fab95b")
+            .bold(`🚀 Subscriptions ready at http://localhost:${process.env.PORT || 4000}${server.subscriptionsPath}`));
     });
 })
     .catch((e) => console.log(chalk_1.default.red(e)));

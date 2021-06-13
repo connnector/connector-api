@@ -27,7 +27,7 @@ const isAuth = (req) => {
     // console.log(token);
     let decodedToken;
     try {
-        decodedToken = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        decodedToken = jsonwebtoken_1.default.verify(token, process.env.SECRET);
         if (!decodedToken) {
             return {
                 isAuth,
@@ -41,11 +41,13 @@ const isAuth = (req) => {
     }
     // shows the user is an authenticated user
     // pulls data off the token
-    const { id } = decodedToken;
+    const { id, userName } = decodedToken;
     isAuth = true;
+    console.log(isAuth, userName, id);
     return {
         isAuth,
         id,
+        userName,
     };
 };
 exports.default = isAuth;

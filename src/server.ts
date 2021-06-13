@@ -74,15 +74,15 @@ const server = new ApolloServer({
     Upload: GraphQLUpload,
   },
   context: ({ req, res, connection }) => {
-    if (connection) {
-      return { ...connection, pubsub, res, req };
-    } else {
-      return { ...isAuth(req), pubsub, res, req };
-    }
+    return { ...isAuth(req), pubsub, res, req };
+  },
+  subscriptions: {
+    path: "/subscriptions",
   },
 });
 
 server.applyMiddleware({ app });
+server.installSubscriptionHandlers(httpServer);
 
 databse
   .connect()
@@ -96,6 +96,15 @@ databse
             `🚀 Server ready at http://localhost:${process.env.PORT || 4000}${
               server.graphqlPath
             }`
+          )
+      );
+      console.log(
+        chalk
+          .hex("#fab95b")
+          .bold(
+            `🚀 Subscriptions ready at http://localhost:${
+              process.env.PORT || 4000
+            }${server.subscriptionsPath}`
           )
       );
     });

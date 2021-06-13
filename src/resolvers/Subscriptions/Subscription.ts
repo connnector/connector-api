@@ -1,19 +1,16 @@
 import Chat from "../../model/Chat";
-import { Context, AuthError, getUserId } from "../../utils";
+import { authCheck } from "../../helper_functions/authCheck";
 
 const Subscription = {
   liveChat: {
-    subscribe: async (parent, args: { chatId: string }, ctx: Context, info) => {
-      //         const { userName } = getUserId(ctx);
+    subscribe: async (parent, args: { chatId: string }, context, info) => {
+      authCheck(context);
 
-      //   if (!userName) {
-      //     throw new AuthError();
-      //   }
       const chat = await Chat.findById(args.chatId);
       if (!chat) {
         throw new Error("Invalid chat id");
       }
-      return ctx.pubsub.asyncIterator(`chat ${args.chatId}`);
+      return context.pubsub.asyncIterator(`chat ${args.chatId}`);
     },
   },
 };

@@ -7,6 +7,7 @@ const CommentMutation_1 = require("./Mutations/CommentMutation");
 const ChatMutation_1 = require("./Mutations/ChatMutation");
 const LikeMutation_1 = require("./Mutations/LikeMutation");
 const Mutation = {
+    sendOtp: UserMutation_1.sendOtp,
     signUp: UserMutation_1.signUp,
     login: UserMutation_1.login,
     deleteUser: UserMutation_1.deleteUser,

@@ -14,18 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = void 0;
 const Chat_1 = __importDefault(require("../../model/Chat"));
+const authCheck_1 = require("../../helper_functions/authCheck");
 const Subscription = {
     liveChat: {
-        subscribe: (parent, args, ctx, info) => __awaiter(void 0, void 0, void 0, function* () {
-            //         const { userName } = getUserId(ctx);
-            //   if (!userName) {
-            //     throw new AuthError();
-            //   }
+        subscribe: (parent, args, context, info) => __awaiter(void 0, void 0, void 0, function* () {
+            authCheck_1.authCheck(context);
             const chat = yield Chat_1.default.findById(args.chatId);
             if (!chat) {
                 throw new Error("Invalid chat id");
             }
-            return ctx.pubsub.asyncIterator(`chat ${args.chatId}`);
+            return context.pubsub.asyncIterator(`chat ${args.chatId}`);
         }),
     },
 };
