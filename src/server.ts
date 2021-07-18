@@ -81,32 +81,42 @@ const server = new ApolloServer({
   },
 });
 
-server.applyMiddleware({ app });
-server.installSubscriptionHandlers(httpServer);
+const startServer = async () => {
+  await startServer();
+};
 
-databse
-  .connect()
+startServer()
   .then(() => {
-    // Use native http server to allow subscriptions
-    httpServer.listen(PORT || 4000, () => {
-      console.log(
-        chalk
-          .hex("#fab95b")
-          .bold(
-            `🚀 Server ready at http://localhost:${process.env.PORT || 4000}${
-              server.graphqlPath
-            }`
-          )
-      );
-      console.log(
-        chalk
-          .hex("#fab95b")
-          .bold(
-            `🚀 Subscriptions ready at http://localhost:${
-              process.env.PORT || 4000
-            }${server.subscriptionsPath}`
-          )
-      );
-    });
+    server.applyMiddleware({ app });
+    server.installSubscriptionHandlers(httpServer);
+
+    databse
+      .connect()
+      .then(() => {
+        // Use native http server to allow subscriptions
+        httpServer.listen(PORT || 4000, () => {
+          console.log(
+            chalk
+              .hex("#fab95b")
+              .bold(
+                `🚀 Server ready at http://localhost:${
+                  process.env.PORT || 4000
+                }${server.graphqlPath}`
+              )
+          );
+          console.log(
+            chalk
+              .hex("#fab95b")
+              .bold(
+                `🚀 Subscriptions ready at http://localhost:${
+                  process.env.PORT || 4000
+                }${server.subscriptionsPath}`
+              )
+          );
+        });
+      })
+      .catch((e) => console.log(chalk.red(e)));
   })
-  .catch((e) => console.log(chalk.red(e)));
+  .catch((e) => {
+    console.log(e);
+  });
